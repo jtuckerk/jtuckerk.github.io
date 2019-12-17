@@ -116,7 +116,7 @@
                 of black box.</p>
               <p class="para">
                 The models (not all are neural networks) in this post are composed of 3
-                types operations.
+                types of operations.
               </p>
 
               <ul class="">
@@ -126,7 +126,7 @@
               </ul>
 
               <p class="para"> We'll build 3 models, add 1 operation at a time, and visualize why it
-                is necessary to make a prediction. If you're comfortable in Python you can follow
+                is necessary to make a prediction. If you're comfortable in Python, you can follow
                 along
                 in <a href="https://colab.research.google.com/drive/1LsJFYZvSg8rKqzZyoUYKIgbhiUZLKK02#offline=true&sandboxMode=true">code</a>. Let's
                 start by defining the structure of the inputs and outputs.
@@ -136,12 +136,12 @@
               <p class="para">
                 We'll look at 3 datasets in this
                 post. <a href="https://en.wikipedia.org/wiki/Iris_flower_data_set">The Iris Flower
-                  Dataset</a> and 2 synthetic datasets. We won't actually make predictions on the Iris
+                Dataset</a> and 2 synthetic datasets. We won't actually make predictions on the Iris
                 dataset, but it will help us understand the structure of the other 2 datasets, which
-                are a bit more abstract. The Iris dataset consists of information about
-                flowers: 4 measurements, petal width, petal length, sepal width, and
-                sepal length (in centimeters) and a species label for each flower. A common task is
-                to predict the species from the measurements. The model takes 4 input measurements,
+                are a bit more abstract. The Iris dataset consists of information about 3 species of
+                flowers: 4 measurements, petal width, petal length, sepal width, and sepal length
+                (in centimeters) and a species label for each flower. A common task is to predict
+                the species from the measurements. The model takes 4 input measurements,
                 or <b>features</b>, as a point $(pw, pl, sw, sl)$ and predicts a score for each
                 species $(s0, s1, s2)$. A high score $s2$ and lower scores $s0$ and $s1$ means the
                 model predicts that the input measurements came from a flower of species 2,
@@ -157,7 +157,7 @@
                 a common decision boundary.
               </p>
               <p class="para">
-                We can think of the 4 inputs measurements as points in 4 dimensional space and the
+                We can think of the 4 input measurements as points in 4 dimensional space and the
                 predictions for all 3 species as points in 3D space, but as people living in 3D and
                 looking at this post on 2D screens, that is easier said than done. The datasets
                 we'll predict in this post have just 2 input features and a single output dimension,
@@ -322,7 +322,7 @@
                 different weight values for both the 2D and 1D projection. It's useful to think
                 about the space and the points within it being stretched and rotated by a
                 projection. This is easiest to see in the first plot in 2D. The values $\textbf{q}$
-                and $\textbf{s}$ are t$\textbf{t}$in both weight matrices and the 1D projection is just
+                and $\textbf{s}$ are in both weight matrices and the 1D projection is just
                 the <b>x'</b> values from the result of the 2D projection. At this point you may
                 want to look at
                 the <a href="https://en.wikipedia.org/wiki/Matrix_multiplication#Illustration">steps
