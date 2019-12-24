@@ -10,7 +10,7 @@
 
   <meta property="og:site_name" content="LearningKirvs">  
   <meta property="og:title" content="Visualizing Neural Network Predictions">  
-  <meta property="og:image" content="https://jtuckerk.github.io/images/loss_landscape_big.png">
+  <meta property="og:image" content="https://jtuckerk.github.io/images/xor_dataset.png">
   <meta property="og:description" content="Can we peek inside a simple neural network to get a better understanding of how it makes predictions?">
   <!-- Font -->
 
@@ -19,7 +19,7 @@
 <meta name="twitter:creator" content="@tuckerkirven">
 <meta name="twitter:title" content="Visualizing Neural Network Predictions">
 <meta name="twitter:description" content="Can we peek inside a simple neural network to get a better understanding of how it makes predictions?">
-  <meta name="twitter:image" content="https://jtuckerk.github.io/images/loss_landscape_big.png">
+  <meta name="twitter:image" content="https://jtuckerk.github.io/images/xor_dataset.png">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
 
 
@@ -175,7 +175,9 @@
                 </div>
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <a name="XOR_Dataset">
                   <img src="images/xor_dataset.png" class="img-fluid mx-auto">
+
                   <div class="figure-text-center"><b>Dataset 2.)</b> XOR dataset</div>
                   <p class="para">
                     The second is
@@ -183,6 +185,7 @@
                     dataset. Remember, the model is not predicting something about an image full of
                     colored points, it's just predicting the color of each point.
                   </p>
+                  </a>
                 </div>
               </div>
               <p class="para">
@@ -329,8 +332,8 @@
                   involved in matrix multiplication</a> to understand how each point is calculated.
                 <div class="figure-container">
                   <div class="animate center-text">
-                    <video class="videoGif embed-responsive img-max" disableRemotePlayback playsinline>
-                      <source src="visualize_nn_predictions/gifs/diag_nobias.mp4" type="video/mp4" />
+                    <video class="videoGif embed-responsive img-max" preload="metadata" disableRemotePlayback playsinline>
+                      <source src="visualize_nn_predictions/gifs/diag_nobias.mp4#t=0.1" type="video/mp4" />
                     </video>
                   </div>
 
@@ -339,6 +342,7 @@
                     diagonal dataset. <b>Top:</b> 2D and <b>Bottom:</b> 1D (with a histogram to show
                     point density).</div>
                 </div>
+                <a name="Model1"></a> 
                 <p class="para">
                   You may have noticed a point in the animation where all of the black points were
                   farther left in 2D and lower in 1D than all of the blue points. If not, watch it
@@ -397,8 +401,8 @@
               (and the inspiration for this post).
             </p>
             <div class="animate center-text">
-              <video class="videoGif embed-responsive img-max" muted disableRemotePlayback playsinline>
-                <source src="visualize_nn_predictions/gifs/diag+bias.mp4" type="video/mp4" />
+              <video class="videoGif embed-responsive img-max" muted preload="metadata" disableRemotePlayback playsinline>
+                <source src="visualize_nn_predictions/gifs/diag+bias.mp4#t=0.1" type="video/mp4" />
               </video>
             </div>
             <div class="figure-text"><b>Animation 2.)</b> Model 2 as it learns the
@@ -451,11 +455,12 @@
               <b>What would happen if we didn't project into 3 dimensions?</b> Take a second to
               ponder this. You can also try it yourself in
               the <a href="https://colab.research.google.com/drive/1LsJFYZvSg8rKqzZyoUYKIgbhiUZLKK02#offline=true&sandboxMode=true">colab
-                notebook for this post.</a>
+                notebook for this post. 
             </p>
             <div class="eq-padding">
               <div class="row vertical-align no-gutters">
                 <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                    <a name="Model3"></a>
                   $$
                   \begin{equation}
                   sigmoid(\textbf{DW}_{2 \times 3} + \textbf{b}_3) \Rightarrow \textbf{H}_{{n \times 3}}
@@ -465,6 +470,7 @@
                     linear transformation of the dataset.</div>
                 </div>
                 <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+
                   \begin{equation}
                   \textbf{H}\textbf{W}_{3 \times 1} + b \Rightarrow \textbf{P}_{{n \times 1}}
                   \end{equation}
@@ -491,8 +497,8 @@
               dataset.
             </p>
             <div class="animate center-text">
-              <video class="videoGif embed-responsive img-max" disableRemotePlayback playsinline>
-                <source src="visualize_nn_predictions/gifs/xor_full_final.mp4" type="video/mp4" />
+              <video class="videoGif embed-responsive img-max" preload="metadata" disableRemotePlayback playsinline>
+                <source src="visualize_nn_predictions/gifs/xor_full_final.mp4#t=0.1" type="video/mp4" />
             </div>
             <div class="figure-text"><b>Animation 3.)</b> Model 3 as it learns the
               XOR dataset.<br>

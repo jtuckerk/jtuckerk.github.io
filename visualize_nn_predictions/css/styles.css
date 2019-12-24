@@ -36,7 +36,7 @@ h5{ font-size: 1.1em; }
 h6{ font-size: .9em; letter-spacing: 1px; }
 
 
-a, button{ text-decoration: underline; color: #229DFF; display: inline-block; color: inherit; transition: all .3s; }
+a, button{ text-decoration: underline; color: #229DFF; display: inline; color: inherit; transition: all .3s; }
 
 a:focus, a:active, a:hover,
 button:focus, button:active, button:hover{ text-decoration: none; color: #498BF9; }

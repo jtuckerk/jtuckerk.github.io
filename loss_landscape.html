@@ -1,0 +1,454 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>Visualizing The Loss Landscape
+  </title>
+  <base target="_blank">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+
+  <meta property="og:site_name" content="LearningKirvs">
+  <meta property="og:title" content="What is a Loss Landscape. A visual exploration">
+  <meta property="og:image" content="https://jtuckerk.github.io/images/loss_landscape_big.png">
+  <meta property="og:description" content="How can seeing and uderstanding a loss landscape give insights into why some ML tools and procedures work better than others.">
+  <!-- Font -->
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@learningkirvs">
+  <meta name="twitter:creator" content="@tuckerkirven">
+  <meta name="twitter:title" content="What is a Loss Landscape. A visual exploration">
+  <meta name="twitter:description" content="How can seeing and uderstanding a loss landscape give insights into why some ML tools and procedures work better than others.">
+  <meta name="twitter:image" content="https://jtuckerk.github.io/images/loss_landscape_big.png">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+
+
+  <!-- Stylesheets -->
+
+  <link href="common-css/bootstrap.css" rel="stylesheet">
+
+  <link href="common-css/ionicons.css" rel="stylesheet">
+
+
+  <link href="visualize_nn_predictions/css/styles.css" rel="stylesheet">
+
+  <link href="visualize_nn_predictions/css/responsive.css" rel="stylesheet">
+
+  <link href="visualize_nn_predictions/css/custom.css" rel="stylesheet">
+
+  <link href="css/custom.css" rel="stylesheet">
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-140927467-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-140927467-1');
+  </script>
+
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({"HTML-CSS": { scale: 85}, tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  </script>
+</head>
+
+<body>
+
+  <header>
+    <div class="row no-gutters">
+      <div class="col-12">
+
+
+        <a href="index.html" target="_self" class="logo float-left noline">Learning Kirvs</a>
+
+      </div>
+    </div>
+    <!-- conatiner -->
+  </header>
+
+  <section class="post-area section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-lg-22 col-md-22 col-sm-12 col-xs-12 mx-auto">
+
+          <div class="main-post">
+
+            <div class="blog-post-inner">
+
+              <h2 class="title center-text">
+                What is a Loss Landscape? A visual exploration
+              </h2>
+              <br>
+              </iron-icon>
+
+              <p class="para">
+                In this post I will explain what a loss landscape is and how it relates to training
+                a model to make predictions. Creating these visualizations after
+                reading <a href="https://arxiv.org/abs/1712.09913">Visualizing the loss landscape of
+                neural networks</a> helped me understand that paper and appreciate the complexity of
+                training neural networks. Hopefully this post will give you some useful intuitions
+                about machine learning and allow you to thoroughly
+                enjoy <a href="https://losslandscape.com">Javier Ideami's nice loss landscape
+                images</a>.
+              </p>
+              <img src="images/loss_landscape_big.png" class="img-fluid mx-auto">
+              <div class="figure-text-center"><b>Figure 1.) </b>The loss landscape
+                for <a href="visualize_nn_predictions.html#Model3" target="_blank">Model 3</a>'s loss
+                landscape for the <a href="visualize_nn_predictions.html#XOR_Dataset" target="_blank">XOR dataset</a> from <a href="visualize_nn_predictions.html#Model3" target="_blank">post 1</a>.</div>
+              <p class="para">
+                In <a href="visualize_nn_predictions.html#Model3" target="_blank">my first post</a>
+                we saw how models make predictions, but skipped over how they are trained to make
+                predictions. If you haven't read that post yet, I recommend that you do. This post
+                will make use of the same models and datasets.
+              </p>
+              <h3> What is Loss? </h3>
+              <p class="para">
+                When a model makes predictions, we need some way to quantify how good those
+                predictions are.
+              </p>
+              <p class="para">
+                <b>What's wrong with accuracy?</b> It's a common and familiar metric. If a model
+                makes 10 predictions and got 9 of them correct, that would be an accuracy of
+                90%. But what if the desired predictions are either 0 or 1 (with a decision boundary
+                of 0.5)? For a desired value of 1, one model might predict 0.6 and another might be
+                0.99. Both models would be correct (above 0.5) for that example, but in order to
+                train, there needs to be some way to say that the latter makes a better prediction.
+              </p>
+
+              <p class="para">
+                We need a <b>loss function</b> that will measure how close the desired output $y$
+                and the model output $\hat y$ are to each other. As the model output gets closer to
+                the desired output, the loss should decrease and reach 0 when the values match. The
+                process of changing a model to minimize the loss is
+                called <a href="https://en.wikipedia.org/wiki/Mathematical_optimization">optimization</a>. In
+                machine learning this is typically done with some variant
+                of <a href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent">stochastic
+                  gradient descent</a> (SGD) and won't be the focus of this post.
+              </p>
+              <div class="center-text">
+                $$
+                \begin{equation}
+                \mathcal{L} = (y - \hat y)^2
+                \end{equation}
+                $$
+              </div>
+              <div class="figure-text-center"><b>Loss Function.)</b> Squared loss, or squared
+                error. One of <a href="https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html">many common loss functions</a></div>
+
+
+              <img src="loss_landscape/images/loss_func.png" class="img-fluid mx-auto" style="padding-top: 40px;">
+              <div class="figure-text-center"><b>Figure 2.)</b> Loss vs. difference in outputs ($y -
+                \hat y$).</div>
+            </div>
+
+            <p class="para">
+              Figure 2 shows how the loss changes as the predictions get further away from the
+              desired outputs. For example, if the desired output was 0 and the prediction was 2,
+              that would result in a loss value of 4. The average of the loss for each point point
+              in the dataset gives the loss for the whole dataset. For this post the
+              loss values used to construct the landscapes will be the average loss for the whole
+              dataset.
+            </p>
+            <h3> Models as points </h3>
+            <p class="para">
+              In <a href="visualize_nn_predictions.html" target="_blank">post 1</a> we looked at the inputs as
+              points. We also saw notation for a model as a function that took in points and
+              parameters (values for weights and biases) to produce predictions: $\textbf{P} =
+              f(\textbf{D}, \theta)$. Let's conceptualize the parameters θ as a
+              point in $n$ dimensional space, where $n$ is the number of parameters in the model.
+            </p>
+            <p class="para">
+              <a href="visualize_nn_predictions.html#Model1">Model 1</a>, a matrix multiplication of the dataset and a $2 \times 1$ matrix, can be
+              represented as the point $(q, s)$.
+            </p>
+            <div class="center-text">
+              $$
+              \begin{equation}
+              \textbf{D}_{n \times 2}
+              \left[
+              \begin{array}{}
+              q \\
+              s \\
+              \end{array}
+              \right]
+              \Rightarrow
+              \left[
+              \begin{array}{}
+              \vdots \\
+              \hat y \\
+              \vdots\\
+              \end{array}
+              \right]\\
+              \end{equation}
+              $$
+            </div>
+            <div class="figure-text-center"><b>Model 1.)</b> 2D->1D projection</div>
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding-top: 30px;">
+                <img src="loss_landscape/images/2Dmodel_params_training.png" class="img-fluid mx-auto" style="image-rendering: -webkit-optimize-contrast;">
+                <div class="figure-text"><b>Figure 3.)</b> Model 1 parameters as points during training (black to purple) on the diagonal dataset.</div>
+              </div>
+
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding-top: 30px;">
+                <img src="loss_landscape/images/2Dgrid.png" class="img-fluid mx-auto">
+                <div class="figure-text"><b>Figure 4.)</b> The loss of models near the start and
+                  end points of training.</div>
+              </div>
+            </div>
+            <p class="para">
+              From figures 3 through 6 we can see how the loss decreases from the start to the end
+              of training. The initial model could have been any point in 2D space, the <b>parameter
+                space</b>, and if trained properly should always end up at a lower point on the loss
+              landscape than it started. Figures 4, 5, and 6 all show the same data in slightly
+              different ways.
+            </p>
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding-top: 30px;">
+                <div class="animate center-text" style="height: unset;">
+                  <video class="videoGif embed-responsive img-max" preload="metadata" disableRemotePlayback loop playsinline>
+                    <source src="loss_landscape/gifs/rotate2dproj_surface.mp4#t=0.1" type="video/mp4" />
+                  </video>
+                </div>
+
+                <div class="figure-text-center"><b>Figure 5.)</b> Loss (z axis) vs. models as points
+                  in the X-Y plane.</div>
+              </div>
+
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding-top: 30px;">
+                <img src="loss_landscape/images/2Dcontour_sc.png" class="img-fluid mx-auto">
+                <div class="figure-text-center"><b>Figure
+                    6.)</b> <a href="https://en.wikipedia.org/wiki/Contour_line">Contour</a> plot of
+                  the loss landscape.</div>
+              </div>
+            </div>
+            <p class="para">
+              <b>Why train? Can't we pick the point with the lowest loss in the landscape?</b>
+              Calculating the loss for each point in figure 4 isn't free. For this model
+              and dataset, it takes slightly more time than optimizing with SGD. As models get
+              larger, searching for an optima in this way quickly becomes intractable.
+            </p>
+            <p class="para">
+              <b>How do we visualize larger models?</b> Model 2 from visualizing NN predictions had
+              an additional parameter $b$, so if we wanted to plot all of the parameters and the
+              loss, $(q, s, b, \mathcal{L})$ we would need 4 dimensions. But model 3 has 13
+              parameters, and models used on <i>real problems</i> can have thousands
+              to <a href="https://yashuseth.blog/2019/06/12/bert-explained-faqs-understand-bert-working/">hundreds
+                of millions of parameters</a>. Since we can't visualize every dimension of those loss
+              landscapes, we'll need a way to visualize sections of the landscape that might be
+              interesting.
+            </p>
+            <h3> Slicing the loss landscape </h3>
+            <p class="para">
+              In this post we'll see 1D, 2D, and 3D slices of loss landscapes. We've seen models as
+              2D points in figures 3 through 6, which can be considered 2D slices. To understand
+              that, let's look at a 1D slice of that model's landscape for the Diagonal dataset.
+            </p>
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding-top: 30px;">
+                <div class="animate center-text autostarted" style="height: unset;">
+                  <video class="videoGif embed-responsive img-max" preload="metadata" disableRemotePlayback loop playsinline autoplay muted>
+                    <source src="loss_landscape/gifs/slice_2d.mp4#t=0.1" type="video/mp4" />
+                  </video>
+                </div>
+                <div class="figure-text-center"><b>Figure 7.)</b> Interpolating from model A to model B</div>
+              </div>
+
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding-top: 30px;">
+                <img src="loss_landscape/images/1Dloss_slice.png" class="img-fluid mx-auto">
+                <div class="figure-text"><b>Figure 8.)</b> Loss vs. position in the loss landscape
+                  relative to A and B. Instead of using $q$ and $s$ as the axes, we use $\alpha$.</div>
+              </div>
+            </div>
+            <p class="para">
+              In order to calculate the parameter values θ for each point along a slice, we'll
+              take a weighted average (linear interpolation) of the parameters for model A, $θ_A$,
+              and Model B, $θ_B$.
+            </p>
+            $$
+            \theta = (1-\alpha)θ_A + (\alpha)θ_B
+            $$
+            <div class="figure-text-center"><b>Equation 1.)</b> Linear interpolation of point $θ_A$ and
+              point $θ_B$.<br> When $\alpha = 0 \rightarrow \theta = θ_A$ and when $\alpha = 1
+              \rightarrow \theta = θ_B$</div>
+
+            <p class="para">
+              In figure 7, the points along the curved arc show the parameters of the model as the
+              optimizer updates them in order to minimize the loss. The pink dot traces the line
+              shown in figure 8. We could have chosen any slice, but if we're interested in the
+              model's behavior while training, a slice showing the start and end point seems
+              useful.
+            </p>
+            <h3> Visualizing More Complex Landscapes </h3>
+            <p class="para">
+              We've seen how to take a 1D slice of a 2D parameter space. Now we'll look at 2D and
+              3D slices of 13 dimensional parameter spaces for <a href="visualize_nn_predictions.html#Model3" target="_blank">Model 3</a>, a 2 layer neural network.
+            </p>
+            <p class="para">
+              To make a 2D slice, we'll need 2 directions in space to define the slice. If we chose
+              a slice parallel to the first slice, the resulting landscape would be misleadingly
+              symmetrical and unintuitive, since we will visualize each slice on perpendicular axes.
+            </p>
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <img src="loss_landscape/images/XOR3_2d_par_sc_9.png" class="img-fluid mx-auto">
+                <div class="figure-text-center"><b>Figure 9.)</b> Nearly parallel slices of model 3's Loss Landscape on the XOR dataset.</div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <img src="loss_landscape/images/2Dmodel_params_training_PCA_slices.png" class="img-fluid mx-auto">
+                <div class="figure-text-center"><b>Figure 10.)</b> Perpendicular slices for Model 1's parameter space chosen using PCA.</div>
+              </div>
+            </div>
+            <p class="para">
+              Having slices perpendicular to each other will allow us to visualize more interesting
+              features of the loss landscape. For the figures below I've
+              used <a href="https://en.wikipedia.org/wiki/Principal_component_analysis">principal
+                component analysis (PCA)</a> to pick good slices. The result of PCA over the set of
+              parameters at each training step gives vectors (directions in space) that indicate the
+              major movements of the model during training. Figure 10 shows slices chosen with the
+              help of PCA.
+            </p>
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <img src="loss_landscape/images/XOR3_2D_orth_sc_10.png" class="img-fluid mx-auto">
+                <div class="figure-text-center"><b>Figure 11.)</b> 2D slice of Model 3 on the XOR dataset as a contour plot</div>
+
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="animate center-text " style="height: unset;">
+                  <video class="videoGif embed-responsive img-max" preload="metadata" disableRemotePlayback loop playsinline>
+                    <source src="loss_landscape/gifs/XOR3_3D_rotate.mp4#t=0.1" type="video/mp4" />
+                  </video>
+                </div>
+                <div class="figure-text-center"><b>Figure 12.)</b> 2D slice of model 3 on the XOR dataset as a 3D surface. z axis is loss. colored by loss as well. </div>
+              </div>
+            </div>
+            <p class="para">
+              In figure 12 we see 2 low points, the lowest is where the model ended up after
+              training. The other appears to be what is referred to as
+              a <a href="https://www.mathsisfun.com/algebra/functions-maxima-minima.html">local
+              minimum</a>, a point where any slight change in the model results in a higher
+              loss. This point turns out to not actually be a local minimum. It just so happens that
+              this slice misses points near there that would have a lower loss. This can be
+              confirmed by starting the model at that point and verifying that training results in
+              an even lower loss. The animations below show how some apparent local minima get lower
+              as the 2D slice moves.
+            </p>
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="animate center-text " style="height: unset;">
+                  <video class="videoGif embed-responsive img-max" preload="metadata" disableRemotePlayback playsinline>
+                    <source src="loss_landscape/gifs/3DSlice_XOR.mp4#t=0.1" type="video/mp4" />
+                  </video>
+
+                </div>
+                <div class="figure-text-center"><b>Figure 13.)</b> 3D slice of model 3 on the XOR
+                  dataset. $\alpha_1$ and $\alpha_2$ are the x and y axes and each frame of the
+                  animation is a step along the $\alpha_3$ slice.</div>
+              </div>
+
+
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="animate center-text " style="height: unset;">
+                  <video class="videoGif embed-responsive img-max" preload="metadata" disableRemotePlayback playsinline style="padding-top: 150px;">
+                    <source src="loss_landscape/gifs/3DSlice_XOR_flat.mp4#t=0.1" type="video/mp4" />
+                  </video>
+                </div>
+
+                <div class="figure-text-center"><b>Figure 14.)</b> Same data as figure 13, visualized as a 2D slice of a 3D cube (Like <a href="https://miykael.github.io/nipype-beginner-s-guide/neuroimaging.html#smri-structural-mri">visualizing an MRI)</a>.</div>
+              </div>
+            </div>
+            <p class="para">
+              The takeaway from figure 13 and 14 is that 2D slices of loss landscapes may be
+              misleading. By extension, we should assume that 3D slices for models with 13 parameters
+              or more are probably not perfect representations of the model's whole landscape.
+            </p>
+            <p class="para">
+              <b>So why do we care?</b> Most applications of machine learning use loss minimization
+              as the primary objective of training and a large portion of research on ML can be seen
+              as finding algorithms that are better at navigating loss landscapes or finding models
+              with loss landscapes that are easier to
+              navigate. <a href="https://arxiv.org/abs/1712.09913">Visualizing the loss landscape of
+              neural networks</a> showed that adding <a href="">skip connections</a> can make the
+              loss landscape smoother, and therefore easier to
+              navigate. <a href="https://arxiv.org/abs/1609.04836">On Large-Batch Training for Deep
+              Learning: Generalization Gap and Sharp Minima</a> showed that training with smaller
+              batches of data results in the models ending up in low points where the
+              surrounding <i>bowl</i> is much wider, which correlates with a model performing well
+              on unseen data. These aren't proofs of why these tools and procedures result in better
+              models, but they are useful relationships to understand.
+            </p>
+            <h3> In summary </h3>
+            <p class="para">
+              <ul>
+                <li>We defined loss as the result of a loss function on a model's output and the
+                  desired output.</li>
+                <li>We looked at model parameters as points.</li>
+                <li>We created loss landscapes by
+                  including the loss value for each point in the parameter space.</li>
+                <li> Lastly, we created low
+                  dimensional slices to visualize landscapes for complex models.
+                </li>
+              </ul>
+
+
+            </p>
+            <h3> Beyond Loss </h3>
+            <p class="para">
+              Understanding and manipulating the loss landscape is not everything in ML. Another
+              major area of research is understanding if the data and loss functions appropriately
+              represent a useful objective. Meaning, does a model with 0 loss get 100% accuracy?
+              More importantly, how does such a model handle new data, and does it generate outputs
+              that are useful, fair, and safe?
+            </p>
+              <p class="para">
+              Feel free to reach out with any questions or comments on the tweet below and follow
+              me <a href="https://twitter.com/tuckerkirven">@tuckerkirven</a> to see announcements
+              about other posts like this.
+            </p>
+          </div>
+
+        </div>
+        <!-- post-info -->
+
+
+      </div>
+      <!-- main-post -->
+    </div>
+    <!-- col-lg-8 col-md-12 -->
+
+    </div>
+    <!-- row -->
+
+    </div>
+    <!-- container -->
+  </section>
+  <!-- post-area -->
+
+
+  <!-- SCIPTS -->
+
+  <script src="common-js/jquery-3.1.1.min.js"></script>
+
+  <script src="common-js/tether.min.js"></script>
+
+  <script src="common-js/bootstrap.js"></script>
+
+  <script src="common-js/scripts.js"></script>
+
+  <script src="js/gif.js"> </script>
+
+
+
+
+</body>
+
+</html>
