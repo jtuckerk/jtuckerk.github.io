@@ -1,0 +1,613 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>Visualizing NN Predictions
+  </title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+
+  <meta property="og:site_name" content="LearningKirvs">  
+  <meta property="og:title" content="Visualizing Neural Network Predictions">  
+  <meta property="og:image" content="https://jtuckerk.github.io/images/loss_landscape_big.png">
+  <meta property="og:description" content="Can we peek inside a simple neural network to get a better understanding of how it makes predictions?">
+  <!-- Font -->
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@learningkirvs">
+<meta name="twitter:creator" content="@tuckerkirven">
+<meta name="twitter:title" content="Visualizing Neural Network Predictions">
+<meta name="twitter:description" content="Can we peek inside a simple neural network to get a better understanding of how it makes predictions?">
+  <meta name="twitter:image" content="https://jtuckerk.github.io/images/loss_landscape_big.png">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+
+
+  <!-- Stylesheets -->
+
+  <link href="common-css/bootstrap.css" rel="stylesheet">
+
+  <link href="common-css/ionicons.css" rel="stylesheet">
+
+
+  <link href="visualize_nn_predictions/css/styles.css" rel="stylesheet">
+
+  <link href="visualize_nn_predictions/css/responsive.css" rel="stylesheet">
+
+  <link href="visualize_nn_predictions/css/custom.css" rel="stylesheet">
+
+  <link href="css/custom.css" rel="stylesheet">
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-140927467-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-140927467-1');
+  </script>
+
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({"HTML-CSS": { scale: 85}, tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  </script>
+</head>
+
+<body>
+
+  <header>
+    <div class="row no-gutters">
+      <div class="col-12">
+
+
+        <a href="index.html" class="logo float-left noline">Learning Kirvs</a>
+
+
+        <a class="float-right menu" href="https://colab.research.google.com/drive/1LsJFYZvSg8rKqzZyoUYKIgbhiUZLKK02#offline=true&sandboxMode=true" target="_blank">
+          <div class="float-left" style="position:relative;">Code: </div>
+          <div class="float-right colab-icon" style="width: 50px; height: 50px; padding-left: 5px;">
+
+            <iron-icon class="colab-large-icon" icon="colab:colab-logo"><svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope iron-icon" style="pointer-events: none; width: 100%; height: 100%;">
+                <g class="style-scope iron-icon">
+                  <path d="M4.54,9.46,2.19,7.1a6.93,6.93,0,0,0,0,9.79l2.36-2.36A3.59,3.59,0,0,1,4.54,9.46Z" style="fill:#ef9008" class="style-scope iron-icon"></path>
+                  <path d="M2.19,7.1,4.54,9.46a3.59,3.59,0,0,1,5.08,0l1.71-2.93h0l-.1-.08h0A6.93,6.93,0,0,0,2.19,7.1Z" style="fill:#fdba18" class="style-scope iron-icon"></path>
+                  <path d="M11.34,17.46h0L9.62,14.54a3.59,3.59,0,0,1-5.08,0L2.19,16.9a6.93,6.93,0,0,0,9,.65l.11-.09" style="fill:#fdba18" class="style-scope iron-icon"></path>
+                  <path d="M12,7.1a6.93,6.93,0,0,0,0,9.79l2.36-2.36a3.59,3.59,0,1,1,5.08-5.08L21.81,7.1A6.93,6.93,0,0,0,12,7.1Z" style="fill:#fdba18" class="style-scope iron-icon"></path>
+                  <path d="M21.81,7.1,19.46,9.46a3.59,3.59,0,0,1-5.08,5.08L12,16.9A6.93,6.93,0,0,0,21.81,7.1Z" style="fill:#ef9008" class="style-scope iron-icon"></path>
+                </g>
+              </svg>
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- conatiner -->
+  </header>
+
+  <section class="post-area section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-lg-22 col-md-22 col-sm-12 col-xs-12 mx-auto">
+
+          <div class="main-post">
+
+            <div class="blog-post-inner">
+
+              <h2 class="title center-text">
+                Visualizar Predicciones de Redes Neuronales
+              </h2>
+              <br>
+              </iron-icon>
+
+              <p class="para">
+                En esta pagina exploramos lo que pasa dentro de una red neuronal cuando produce una
+                predicción Una red neuronal es una función que toma algún entrada y produce una
+                salida según de acuerdo con algún predicción deseada.  Es possible producir
+                predicciones punteras sin entender los conceptos subrayado en esta pagina. Eso es
+                parte del belleza de la computación y la accumulación de sabiduría. Pero algunas
+                cosas son demasiadas fundamentales para ignorar y cuando me tomé mi tiempo con esas
+                funcionnes, la aprendizaje automatica se puso un poquito más claro para mi.
+              <p class="para">
+                Los modelos (todos no son redes neuronales) que veremos están compuestos por 3
+                tipos de operaciones matemáticas.
+              </p>
+
+              <ul class="">
+                <li>Multiplicación de matrices</li>
+                <li>Término de la ordenada al origen (Adición)</li>
+                <li>Funciones no-lineales</li>
+              </ul>
+
+              <p class="para">
+               Construimos 3 modelos, añadimos 1 operación a la vez, y visualizamos por que es
+               necesario para producir una predicción. Si entiendes Python, recomiendo que mires
+               el <a href="https://colab.research.google.com/drive/1LsJFYZvSg8rKqzZyoUYKIgbhiUZLKK02#offline=true&sandboxMode=true">código</a>
+               si tienes preguntas o quieres manipular algo mientras estás leyendo.  Empezaremos
+               definiendo la estructura de las entradas y las salidas deseadas de los modelos.
+              </p>
+
+              <h3> Conjunots de datos </h3>
+              <p class="para">
+                Inspeccionaremos 3 <i>conjuntos de
+                datos</i>. El <a href="https://en.wikipedia.org/wiki/Iris_flower_data_set"> Conjunto
+                de datos flor iris</a>, y 2 conjuntos sintéticos. No haremos predicciones en el
+                Conjunto de datos flor iris, pero nos ayudara entender la estructura de los otros 2,
+                cuales son más abstractos. El conjunto de datos flor iris consiste de información
+                sobre 3 tipos de flores: 4 mediciones o <i>atributos</i>, el largo y ancho del sépalo y pétalo (tampoco
+                sé que es un sépalo), y el nombre del especie. Algo común es intentar predecir la
+                especie con los mediciones como entradas. El modelo toma los 4 mediciones, como un
+                punto, $(ls, as, lp, ap)$ y predice una puntuación para cada especie $(e0, e1,
+                e2)$. Una alta puntuación $e2$ y puntuaciones mas bajas $e0$ y $e1$ significa que el
+                modelo predice que las mediciones vino de una flor de especie 2, Virginica.
+              </p>
+              <p class="para">
+                En vez de hacer predicciones para las 3 especies, es posible que solo nos importa si
+                una flor es especie 2 o no. En este caso, podríamos mandar que el modelo produce
+                puntuaciones (<b>e2</b>, <b>no e2</b>). O aún más simple, podríamos usar una sola
+                puntuación <b>e2</b> y entender puntuaciones altas como una indicación que sí, los
+                mediciones viene de un flor de especie 2, y las bajas como indicación que
+                no. Podremos elegir una limite de decisión para distinguir puntuaciones altas y
+                bajas, se usa 0.5, típicamente.
+              </p>
+              <p class="para">
+                Podemos conceptualizar los 4 mediciones como puntos en espacio de 4 dimensiones y
+  las predicciones por los 3 especies como puntos en espacio 3D, pero como gente en un mundo físico
+  con 3D y viendo esta pagina en 2D, del dicho al hecho hay un largo trecho. Los conjuntos de data
+  que los modelos intentaron a aprender tienen solo 2 atributos de entrada y una sola dimensión de
+  salida, puntos 2D y 1D, respectivamente.
+              </p>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <img src="images/diag_dataset.png" class="img-fluid mx-auto">
+                  <div class="figure-text-center"><b>Dataset 1.)</b> Diagonal dataset</div>
+                  <p class="para">
+                    La primera conjunto de data sintetica es lo Diagonal. Un punt 2D en el plano
+                    X-Y, por ejemplo $(0.6, 0.2)$ seria una entrada para el modelo y su color es la
+                    coas que el model intenta predecir.
+
+                  </p>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <img src="images/xor_dataset.png" class="img-fluid mx-auto">
+                  <div class="figure-text-center"><b>Dataset 2.)</b> XOR dataset</div>
+                  <p class="para">
+                    El segundo es el Conjunto de
+                    data <a href="https://es.wikipedia.org/wiki/Disyunci%C3%B3n_exclusiva">XOR</a>.
+                    Acuerdese, el modelo no predice algo sobre un imagen lleno de puntos colorados,
+                    solo predice el color de cada punto.
+
+                  </p>
+                </div>
+              </div>
+              <p class="para">
+                Cuando el modelo toma como entrada el punto $(x, y)$, una sola numero, $p$, debería
+                salir. Esto es análogo a la predicción de una sola especie del Conjunto de data
+                Iris, baja por <b>no azul</b> y alta por <b>azul</b>. <br> Vamos a ver si podemos
+                entender como los 3 operaciones convierten puntos de entrada en predicciones.
+              </p>
+
+              <h3> Multiplicación de matrices </h3>
+              <p class="para">
+                Hay muchas maneras de pensar en multiplicación de matrices, pero en este momento
+                pensemos en una cambia $\textbf{W}$ as un conjunto de puntos $\textbf{D}$. El
+                llamaremos el resultado una proyección $\textbf{P}$.
+              </p>
+              <div class="eq-padding">
+                <div class="row vertical-align no-gutters center-text" , style="height: 100%;">
+                  <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+                    $$\begin{equation}
+                    \textbf{D}_{{n \times 2}} =
+                    \left[
+                    \begin{array}{}
+                    \vdots & \vdots \\
+                    x & y\\
+                    \vdots & \vdots\\
+                    \end{array}
+                    \right]
+                    \end{equation}
+                    $$
+                    <div class="figure-text"><b>Def 1.)</b> Puntos de entrada como un $n\times2$ matriz</div>
+                  </div>
+
+
+                  <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+                    $$
+                    \begin{equation}
+                    \textbf{W}_{{2 \times m}} =
+                    \left[
+                    \begin{array}{}
+                    q & \dots & \ \\
+                    s & \dots & \\
+                    \end{array}
+                    \right]
+                    \end{equation}
+                    $$
+                    <div class="figure-text"><b>Def 2.)</b> ${2}\times m $ matriz de pesos</div>
+                  </div>
+                  <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12" style="height: 100%;">
+
+                    $$
+                    \begin{equation}
+                    \textbf{DW} \Rightarrow \textbf{P}_{{n \times m}}
+                    \end{equation}
+                    $$
+                    <div class="figure-text" style="text-align: bottom;"><b>Def 3.)</b>
+                    Multiplicación de matrices D por W</div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <p class="para">
+                Es importante notar las formas de los matrices. La forma de $\textbf{P}$ está determinada por el primero <i>eje</i> de $\textbf{D}$ y el segundo eje de $\textbf{W}$. Eso es decir que sale la misma cantidad de puntos que entra, y la dimensionalidad de los que salen está determinado por la el segundo eje de matriz $\textbf{W}$. Los ejes del <i>centro</i>, en este caso $2$, tienen que estar equivalente así que la multiplicación de matrices tiene sentido (o bien definido). Vamos a ver unos ejemplos en que proyectamos los datos del entrada del Conjunto Diagonal a 2D y 1D. Los pesos del matriz $\textbf{W}$: $\textbf{q}$, $\textbf{r}$, $\textbf{s}$, y $\textbf{t}$ determinan donde en el espacio los puntos están proyectados.
+              </p>
+              <div class="eq-padding">
+                <div class="row vertical-align no-gutters center-text">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    $$
+                    \begin{equation}
+                    \left[
+                    \begin{array}{}
+                    \vdots & \vdots \\
+                    x & y\\
+                    \vdots & \vdots\\
+                    \end{array}
+                    \right]
+                    \left[
+                    \begin{array}{}
+                    q & r \\
+                    s & t \\
+                    \end{array}
+                    \right]
+                    \Rightarrow
+                    \left[
+                    \begin{array}{}
+                    \vdots & \vdots \\
+                    x' & y' \\
+                    \vdots & \vdots \\
+                    \end{array}
+                    \right]
+                    \end{equation}
+                    $$
+                    <div class="figure-text"><b>Def 4.)</b> 2D->2D projection</div>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    $$
+                    \begin{equation}
+                    \left[
+                    \begin{array}{}
+                    \vdots & \vdots \\
+                    x & y\\
+                    \vdots & \vdots\\
+                    \end{array}
+                    \right]
+                    \left[
+                    \begin{array}{}
+                    q \\
+                    s \\
+                    \end{array}
+                    \right]
+                    \Rightarrow
+                    \left[
+                    \begin{array}{}
+                    \vdots \\
+                    p \\
+                    \vdots\\
+                    \end{array}
+                    \right]\\
+                    \end{equation}
+                    $$
+                    <div class="figure-text"><b>Def 5.)</b> 2D->1D projection</div>
+                  </div>
+                </div>
+              </div>
+              <p class="para">
+                La animacion abajo muestra los puntos proyectados al neuvo espacio mientras cycla por pesos differentes por las proyecionnes de 2D y 1D. Es util pensar en el espacio en los puntos dentro de ello estando estrechado y girado por una proyeccion. Esto es más facil ver en la primera figura en 2D. los valores de $\textbf{q}$
+                y $\textbf{s}$ están present en los dos matrices de pesos y la proyeccion 1D es simplemente los valores de <b>x'</b> del proyeccion 2D. At this point you may
+                want to look at
+                the <a href="https://en.wikipedia.org/wiki/Matrix_multiplication#Illustration">steps
+                  involved in multiplicación de matrices</a> to understand how each point is calculated.
+
+  
+                The animation below shows the points projected into new spaces as we cycle through
+                different weight values for both the 2D and 1D projection. It's useful to think
+                about the space and the points within it being stretched and rotated by a
+                projection. This is easiest to see in the first plot in 2D. The values $\textbf{q}$
+                and $\textbf{s}$ are t$\textbf{t}$in both weight matrices and the 1D projection is just
+                the <b>x'</b> values from the result of the 2D projection. At this point you may
+                want to look at
+                the <a href="https://en.wikipedia.org/wiki/Matrix_multiplication#Illustration">steps
+                  involved in multiplicación de matrices</a> to understand how each point is calculated.
+                <div class="figure-container">
+                  <div class="animate center-text">
+                    <video class="videoGif embed-responsive img-max" disableRemotePlayback playsinline>
+                      <source src="visualize_nn_predictions/gifs/diag_nobias.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+
+                  <div class="figure-text"><b>Animation 1.)</b> Each animation frame is the result
+                    of a multiplicación de matrices (slightly different than the previous) of the
+                    diagonal dataset. <b>Top:</b> 2D and <b>Bottom:</b> 1D (with a histogram to show
+                    point density).</div>
+                </div>
+                <p class="para">
+                  You may have noticed a point in the animation where all of the black points were
+                  farther left in 2D and lower in 1D than all of the blue points. If not, watch it
+                  again and maybe even try to stop it where that is the case. Let's take the 1D
+                  outputs and call them predictions. That's our first model. Some values for
+                  weights in $\textbf{W}$, $\textbf{q}$ and $\textbf{s}$, and $\textbf{t}$ix
+                  multiplication <i>are the model</i>. That's it.
+                </p>
+            </div>
+
+            <div class="center-text">
+              $$
+              \begin{equation}
+              \textbf{DW}_{{2 \times 1}} \Rightarrow \textbf{P}_{{n \times 1}}
+              \end{equation}
+              $$
+            </div>
+            <div class="figure-text"><b>Model 1.)</b> A single multiplicación de matrices projecting the
+            dataset from points in 2D to 1D.</div>
+
+            <p class="para">
+              <b>How well can the model do?</b> The dashed line is the decision boundary, and even
+              when all the black points are low and the blues are high, the decision boundary
+              doesn't split them well. So these aren't good predictions. You may have noticed in the
+              animation that the points near the origin (0, 0) always stayed near the origin. That
+              would pose a problem for a point like (0.0, 0.01) that is blue (it's above the y=x
+              diagonal), and should be mapped to above 0.5 in the prediction. The model could really
+              stretch the output space to make the right prediction, but let's go ahead and
+              introduce another operation to make this dataset a bit simpler to solve.
+            </p>
+            <h3> Bias (addition) </h3>
+            <p class="para">
+              What if the model could shift the points on the 1D prediction axis in
+              addition to rotating and stretching with multiplicación de matrices? Let's introduce a
+              new term <b>b</b>, a bias, to the model to do just that.
+            </p>
+            <div class="center-text">
+              \begin{equation}
+              \textbf{DW}_{2 \times 1} + b \Rightarrow \textbf{P}_{{n \times 1}}
+              \end{equation}
+            </div>
+            <div class="figure-text"><b>Model 2.)</b> A single multiplicación de matrices and a bias to
+              shift the projected 1D points.</div>
+            <p class="para">
+              Since the output of $\textbf{DW}$ is a one dimensional point, a scalar, $b$ should be
+              too. Instead of looking at a bunch of random values (as in animation 1), the animation
+              below gives us a glimpse inside the model as it <i>learns</i> values for $\textbf{W}$
+              and $b$ in order to predict the colors of the points in the dataset.
+            </p>
+            <p class="para">
+              "Learning" or "training" and is a-whole-nother can of worms that I won't talk about in
+              this post. What's important to know for now is that we're looking for model weights
+              and a bias that put the points on the appropriate side of the decision boundary. Check
+              out <a href="http://iamtrask.github.io/2015/07/12/basic-python-network/">A Neural
+                Network in 11 lines of Python</a> for an in depth intro to training neural networks
+              (and the inspiration for this post).
+            </p>
+            <div class="animate center-text">
+              <video class="videoGif embed-responsive img-max" muted disableRemotePlayback playsinline>
+                <source src="visualize_nn_predictions/gifs/diag+bias.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <div class="figure-text"><b>Animation 2.)</b> Model 2 as it learns the
+              diagonal dataset.<br>
+              <div class="figure-text-sub"><b>Top:</b> input points in their original location
+                colored according to the model's predictions.<br><b>Middle:</b> 2D projection of the
+                predictions in which the y values are kept the same as the input.<br><b>Bottom:</b>
+                Learned 1D predictions and a histogram to show point density.</div>
+            </div>
+            <p class="para">
+              Great, so model 2 can solve the diagonal dataset. Let's move on to something a
+              bit harder.
+            </p>
+            <img src="images/xor_dataset.png" class="img-fluid mx-auto">
+            <div class="figure-text-center"><b>Dataset 2.)</b> XOR dataset</div>
+            <p class="para">
+              You may be wondering how multiplicación de matrices and a bias can be used to project and
+              shift the XOR dataset such that the appropriate points lie on the appropriate side of
+              the 0.5 decision boundary. The simple answer is that given only those two operations,
+              it's not possible. The result of series of multiplicación de matricess and bias
+              shifts, <b>linear transformations</b> , can always be simplified down to a single
+              linear transformation. In the example below we project <b>a</b> to <b>b</b>
+              then <b>b</b> to <b>c</b> and so on to <b>e</b>, but there will always be a projection
+              that will allow us to project <b>a</b> directly to <b>e</b> and a single linear
+              transformation can only rotate, stretch, and shift. This will always be the case for
+              any sequence of linear transformations, even when projecting up into 3 or more
+              dimensions and then back down.
+            </p>
+            <img src="visualize_nn_predictions/images/linear_transformations.png" class="img-fluid mx-auto">
+            <div class="figure-text-center"><b>Figure 1.)</b> <a href="https://math.hecker.org/2013/09/01/the-composition-of-linear-transformations-is-a-linear-transformation/">Composition of linear transformations</a> </div>
+
+            <h3> Non-Linearity </h3>
+            <p class="para">
+              So the model needs a <b>non-linear</b> function that can <b>fold</b> the space the
+              points are in so that a single rotation and shift can put all of the points of the
+              appropriate color on the appropriate side of the 0.5 decision boundary.
+            </p>
+            <img src="visualize_nn_predictions/images/sigmoid.png" class="img-fluid mx-auto">
+            <div class="figure-text-center"><b>Figure 2.)</b> Sigmoid function</div>
+            <p class="para">
+              Here we have the sigmoid function: a <b>non-linear function</b>. The next model starts
+              by up projecting the dataset into 3 dimensions. When the points are in 3 dimensions,
+              they can be folded in some interesting ways with the sigmoid function. We'll denote
+              the result of these operations as <b>H</b>, since usually intermediate layers in a
+              neural network are referred to as hidden. (Don't worry though, we'll take a peek at
+              what this layer looks like). Now that we've given the model the ability to fold, it
+              can project those points down to a set of 1D predictions that wasn't possible before.
+            </p>
+            <p class="para">
+              <b>What would happen if we didn't project into 3 dimensions?</b> Take a second to
+              ponder this. You can also try it yourself in
+              the <a href="https://colab.research.google.com/drive/1LsJFYZvSg8rKqzZyoUYKIgbhiUZLKK02#offline=true&sandboxMode=true">colab
+                notebook for this post.</a>
+            </p>
+            <div class="eq-padding">
+              <div class="row vertical-align no-gutters">
+                <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                  $$
+                  \begin{equation}
+                  sigmoid(\textbf{DW}_{2 \times 3} + \textbf{b}_3) \Rightarrow \textbf{H}_{{n \times 3}}
+                  \end{equation}
+                  $$
+                  <div class="figure-text"><b>Model 3 - Layer 1.)</b> Applying a nonlinearity to a 3D
+                    linear transformation of the dataset.</div>
+                </div>
+                <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                  \begin{equation}
+                  \textbf{H}\textbf{W}_{3 \times 1} + b \Rightarrow \textbf{P}_{{n \times 1}}
+                  \end{equation}
+                  <div class="figure-text"><b>Model 3 - Layer 2.)</b>
+   Linear transformation of the hidden layer to 1D.</div>
+                </div>
+
+                <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                  \begin{equation}
+                  \textbf{P} = f(\textbf{D}, \theta)
+                  \end{equation}
+                  <div class="figure-text"><b>Model 3 simplified.)</b>
+  A function of input data
+   $\textbf{D}$ and learned parameters θ</div>
+                </div>
+
+              </div>
+            </div>
+            <p class="para">
+              The last equation above is shorthand for the first two and means that the model is a
+              function that takes $\textbf{D}$, some input data, and <i>theta</i>, the learned values
+              for all of the various weights and biases, and outputs a prediction $\textbf{P}$. Let's
+              watch as model 3 learns the parameters θ and tries to predict the points in the XOR
+              dataset.
+            </p>
+            <div class="animate center-text">
+              <video class="videoGif embed-responsive img-max" disableRemotePlayback playsinline>
+                <source src="visualize_nn_predictions/gifs/xor_full_final.mp4" type="video/mp4" />
+            </div>
+            <div class="figure-text"><b>Animation 3.)</b> Model 3 as it learns the
+              XOR dataset.<br>
+              <div class="figure-text-sub"><b>Top:</b> input points in their original location
+                colored according to the model's predictfions. <br><b>Middle:</b> 3D projection, the
+                hidden layer of the model. Colored by prediction (values closer to 0.5 are more
+                grey)
+                <br><b>Bottom:</b> 1D predictions and a histogram to show point density.</div>
+            </div>
+
+            <p class="para">
+              Pretty neat, huh? I thought so when I first saw it and wanted to share. This model can
+              nearly fit the XOR dataset, and if we added another dimension to the hidden layer
+              (making it 4 dimensions), that would give it enough space to fold and predict each
+              point perfectly, but from there it starts to get hard to visualize.
+            </p>
+            <p class="para">
+              If you haven't already, it's worth running through
+              the <a href="https://colab.research.google.com/drive/1LsJFYZvSg8rKqzZyoUYKIgbhiUZLKK02#offline=true&sandboxMode=true">code
+                for these models</a>. Don't just take my word for things like the necessity of the
+              sigmoid layer. Try removing it from the model and look at the predictions and the
+              shape of the points in the hidden layer.
+            </p>
+            <h3> In summary </h3>
+            <p class="para">
+              We looked at how data can be thought of and manipulated as points. Inputs, outputs,
+              and even the intermediate outputs within models can all be thought of as points.
+            </p>
+            <p class="para">
+              We created 3 models using 3 of the most common types of operations in neural networks:
+              Multiplicación de matrices, biases, and nonlinearities.
+              <ol>
+                <li>A single multiplicación de matrices</li>
+                <li>A multiplicación de matrices and a bias</li>
+                <li>A model composed of 2 layers:
+                  <ul>
+                    <li>A multiplicación de matrices and a bias with a non-linearity</li>
+                    <li>A multiplicación de matrices and a bias</li>
+                  </ul>
+                </li>
+              </ol>
+              And we watched their predictions and intermediate layers change as they learned.
+            </p>
+            <p class="para">
+              <b>Wait, so why is it called a neural network?</b> Model 3's configuration, and the
+              non-linearity in specific, are what make Model 3 a neural network. The name comes from
+              a similarity in how small groups of neurons in the brain produce outputs for a given
+              input. <a href="https://ujjwalkarn.me/2016/08/09/quick-intro-neural-networks/">Conceptualizing
+              models as layers of neurons</a> "firing" or "activating" in response to inputs is just
+              a different perspective from the one I've shown in this post.
+            </p>
+            <h3> Going Forward </h3>
+            <p class="para">
+              There is more than 1 lifetime's worth of interesting things to explore in machine
+              learning as of today and the field is constantly expanding, so I've tried to keep this
+              post short and to the point. I've ignored many important basic topics
+              like <a href="https://en.wikipedia.org/wiki/Accuracy_and_precision">Accuracy</a>
+              and <a href="https://algorithmia.com/blog/introduction-to-loss-functions">Loss</a> for
+              quantifying a model's
+              performance, <a href="https://en.wikipedia.org/wiki/Training,_validation,_and_test_sets">train-test
+              splits</a> that help us understand how well a
+              model <a href="https://developers.google.com/machine-learning/crash-course/generalization/video-lecture">generalizes</a>, <a href="https://en.wikipedia.org/wiki/Overfitting">overfitting</a>, <a href="https://en.wikipedia.org/wiki/Regularization_(mathematics)">regularization</a>
+              to help a model prevent overfitting and generalize better, and optimization techniques
+<br>
+
+                  like <a href="https://ruder.io/optimizing-gradient-descent/">SGD</a> .
+            </p>
+            <p class="para"> My next post will explore models as points in space 🤯 and takes
+              inspiration from <a href="https://arxiv.org/abs/1712.09913">Visualizing the loss
+                landscape</a>. I also plan to make a visualizing NN predictions part 2 in which I
+              explore other common model operations and architectures like Convolution, RNNs, and
+              Transformers on simple datasets.
+            </p>
+            <p class="para">
+              Feel free to reach out with any questions or comments on the tweet below and follow
+              me <a href="https://twitter.com/tuckerkirven">@tuckerkirven</a> to see announcements
+              about other posts like this.
+            </p>
+        <blockquote class="twitter-tweet tw-align-center"><p lang="en" dir="ltr">Graphing things has helped my understanding since TI-83s and y=mx+b.<br><br>I&#39;ve written a post about some of my first &quot;aha&quot; moments learning ML. This is geared towards people new to ML, but more seasoned practitioners might find these visualizations neat too.<a href="https://t.co/BejVWD2CuX">https://t.co/BejVWD2CuX</a></p>&mdash; Tucker Kirven 🧢 (@tuckerkirven) <a href="https://twitter.com/tuckerkirven/status/1206691176398458885?ref_src=twsrc%5Etfw">December 16, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            <!-- blog-post-inner -->
+
+          </div>
+
+        </div>
+        <!-- post-info -->
+
+
+      </div>
+      <!-- main-post -->
+    </div>
+    <!-- col-lg-8 col-md-12 -->
+
+    </div>
+    <!-- row -->
+
+    </div>
+    <!-- container -->
+  </section>
+  <!-- post-area -->
+
+
+  <!-- SCIPTS -->
+
+  <script src="common-js/jquery-3.1.1.min.js"></script>
+
+  <script src="common-js/tether.min.js"></script>
+
+  <script src="common-js/bootstrap.js"></script>
+
+  <script src="common-js/scripts.js"></script>
+
+  <script src="js/gif.js"> </script>
+
+
+
+
+</body>
+
+</html>
