@@ -26,6 +26,7 @@ h1, h2, h3, h4, h5, h6 { margin: 0; font-weight: 100; line-height: 1.5; font-fam
 
 h1,h2,h3,h4,h5,h6{ line-height: 1.5; padding-top: 20px;}
 .main-post .para{ margin-bottom: 15px; margin-top: 15px; }
+.main-post .footnote{ margin-bottom: 15px; margin-top: 15px; font-size: 15px;}
 /* p{ line-height: 1.6; font-family: 'Maven Pro', serif; font-weight: 500; color: #111; } */
 
 h1{ font-size: 4em; line-height: 1; }
