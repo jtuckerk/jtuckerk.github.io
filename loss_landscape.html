@@ -106,8 +106,7 @@
                 landscape for the <a href="visualize_nn_predictions.html#XOR_Dataset" target="_blank">XOR dataset</a> from <a href="visualize_nn_predictions.html#Model3" target="_blank">post 1</a>.</div>
               <p class="para">
                 In <a href="visualize_nn_predictions.html#Model3" target="_blank">my first post</a>
-                we saw how models make predictions, but skipped over how they are trained to make
-                predictions. If you haven't read that post yet, I recommend that you do. This post
+                we saw how models make predictions, but skipped over how they are trained. If you haven't read that post yet, I recommend that you do. This post
                 will make use of the same models and datasets.
               </p>
               <h3> What is Loss? </h3>
@@ -127,7 +126,7 @@
               <p class="para">
                 We need a <b>loss function</b> that will measure how close the desired output $y$
                 and the model output $\hat y$ are to each other. As the model output gets closer to
-                the desired output, the loss should decrease and reach 0 when the values match. The
+                the desired output, the loss should decrease until the values match. The
                 process of changing a model to minimize the loss is
                 called <a href="https://en.wikipedia.org/wiki/Mathematical_optimization">optimization</a>. In
                 machine learning this is typically done with some variant
@@ -153,9 +152,8 @@
             <p class="para">
               Figure 2 shows how the loss changes as the predictions get further away from the
               desired outputs. For example, if the desired output was 0 and the prediction was 2,
-              that would result in a loss value of 4. The average of the loss for each point point
-              in the dataset gives the loss for the whole dataset. For this post the
-              loss values used to construct the landscapes will be the average loss for the whole
+              that would result in a loss value of 4. For this post the loss values used to
+              construct the landscapes will be an average of the loss for all examples in the
               dataset.
             </p>
             <h3> Models as points </h3>
@@ -240,17 +238,18 @@
               <b>How do we visualize larger models?</b> Model 2 from visualizing NN predictions had
               an additional parameter $b$, so if we wanted to plot all of the parameters and the
               loss, $(q, s, b, \mathcal{L})$ we would need 4 dimensions. But model 3 has 13
-              parameters, and models used on <i>real problems</i> can have thousands
-              to <a href="https://yashuseth.blog/2019/06/12/bert-explained-faqs-understand-bert-working/">hundreds
-                of millions of parameters</a>. Since we can't visualize every dimension of those loss
-              landscapes, we'll need a way to visualize sections of the landscape that might be
+              parameters, and models used on <i>real problems</i> can have thousands to hundreds
+              of <a href="https://yashuseth.blog/2019/06/12/bert-explained-faqs-understand-bert-working/"><s>millions</s></a> <a href="https://twitter.com/arankomatsuzaki/status/1266172138773307392?s=20">billions</a>
+              of parameters. Since we can't visualize every dimension of those loss landscapes,
+              we'll need a way to visualize sections of the landscape that might be
               interesting.
             </p>
             <h3> Slicing the loss landscape </h3>
             <p class="para">
-              In this post we'll see 1D, 2D, and 3D slices of loss landscapes. We've seen models as
-              2D points in figures 3 through 6, which can be considered 2D slices. To understand
-              that, let's look at a 1D slice of that model's landscape for the Diagonal dataset.
+              In the remaining sections we'll see 1D, 2D, and 3D slices of loss landscapes. We've
+              seen models as 2D points in figures 3 through 6, which can be considered 2D slices. To
+              understand that, let's look at a 1D slice of that model's 2D landscape for the Diagonal
+              dataset.
             </p>
             <div class="row">
               <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding-top: 30px;">
@@ -337,10 +336,10 @@
               a <a href="https://www.mathsisfun.com/algebra/functions-maxima-minima.html">local
               minimum</a>, a point where any slight change in the model results in a higher
               loss. This point turns out to not actually be a local minimum. It just so happens that
-              this slice misses points near there that would have a lower loss. This can be
-              confirmed by starting the model at that point and verifying that training results in
-              an even lower loss. The animations below show how some apparent local minima get lower
-              as the 2D slice moves.
+              this slice misses points near there that would have a lower loss. I confirmed this by
+              starting the model at that point and verifying that more training resulted in an even
+              lower loss. The animations below show how some apparent local minima get lower as the
+              2D slice moves.
             </p>
             <div class="row">
               <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -393,7 +392,7 @@
                   desired output.</li>
                 <li>We looked at model parameters as points.</li>
                 <li>We created loss landscapes by
-                  including the loss value for each point in the parameter space.</li>
+                  including the loss value for each point in a subset of the parameter space.</li>
                 <li> Lastly, we created low
                   dimensional slices to visualize landscapes for complex models.
                 </li>

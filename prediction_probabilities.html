@@ -190,7 +190,7 @@
                                 $not\_xor$ and $is\_xor$. The benefit of a synthetic dataset is that
                                 we can generate as little or as much train and validation data as we
                                 want, in order to explore the effect that has on the model
-                                outputs. After running training we can count the number of
+                                outputs. After training we can count the number of
                                 predictions that were classified correctly and plot those in bins
                                 according to their value.</p>
 
@@ -226,11 +226,9 @@
                                 its predictions: the model outputs a low score of around $0.80$, but
                                 gets $100\%$ accuracy for those examples. These plots have been
                                 generated from validation data on $50\times$ more data than the
-                                training set to ensure we get a representative sample. In real
-                                applications of machine learning if such a large proportion of data
-                                was held out from the training process to be used to verify the
-                                calibration of the confidence of the model, it would likely not be
-                                very accurate.</p>
+                                training set to ensure we get a representative sample. Typically,
+                                high accuracy is the primary focus and holding out so much data to
+                                verify a model's calibration is not prioritized.</p>
                             <a name="footnote1_loc">
                                 <p class="para">
                                     Try messing around with different settings in the notebook and
