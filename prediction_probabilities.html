@@ -103,8 +103,30 @@
                                 Prediction Scores are not Probabilities
                             </h2>
                             <br>
-
-
+                            <h3>TLDR:</h3>
+                            <p class="para">
+                                In order for a multi-class classifier output to be a
+                                valid <i>probability distribution</i> over the classes, a score's
+                                value would have to indicate how often a label with that score is
+                                the correct label. For example, outputs with a score of $.75$ should
+                                be correct $75\%$ of the time, no more, no less. This isn't usually
+                                the case with neural networks and it's easy to show. <b>Just adding
+                                a softmax activation does not magically turn outputs into
+                                probabilities</b>. The below image shows the proportion of correct
+                                predictions vs the output scores for a very simple neural network.
+                            </p>
+                           <img src="prediction_probabilities/images/correct_ratio.png" class="img-fluid mx-auto">
+                              <p class="para">As models and training algorithms get more complex, the outputs typically diverge further from ideal probability estimates.
+  </p>
+                            <h3>Why do I care?</h3>
+                            <p class="para">
+                                Improving the accuracy of Machine Learning model predictions is the
+                                subject of much study. Estimating and calibrating model uncertainty
+                                is another field of study, but receives much less attention. I hope
+                                to do a full post or series on uncertainty in ML, but for this post
+                                I'll be focusing on neural networks and how their outputs lack
+                                probabilistically reliable information.
+                            </p>
 
                             <p class="para">
                                 Improving the accuracy of Machine Learning model predictions is the
@@ -126,21 +148,22 @@
                                 to determine if that prediction was worth acting on or if more tests
                                 or consideration were needed before proceeding.
                             </p>
+                              <h3>Prove it</h3>
                             <p class="para">
                                 I've provided code using
                                 both <a href="https://colab.research.google.com/drive/1_xjoPnj6JD75zBIxmu67JQB7NinXOKlS#forceEdit=true&sandboxMode=true">Pytorch</a>
                                 and <a href="https://colab.research.google.com/drive/1qYEtxLvT5Z7CXBe1aVRnhw2xt32Y8lJM#forceEdit=true&sandboxMode=true">Tensorflow</a>
                                 so that you can see for yourself how various things like the amount
                                 of data, training time, and model complexity affect the over or
-                                under confidence of a model's predictions. I hope this post and code
-                                help to illustrate how common neural networks and training
+                                under confidence of a model's predictions. This post and code
+                                illustrate how common neural networks and training
                                 procedures don't inherently result in models that produce well
                                 calibrated confidence estimates.
                             </p>
 
                             <p class="para">I'll be using the same architecture
                                 as <a href="visualize_nn_predictions.html#Model3"
-                                target="_blank">Model 3</a> from my first post with one change:
+                                target="_blank">Model 3</a> (a 2 layer nueral network) from my first post with one change:
                                 Instead of using a single output value, I'll use two outputs with a
                                 Softmax function. This will make the model more similar to models
                                 typically used for
