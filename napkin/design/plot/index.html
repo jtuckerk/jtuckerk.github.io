@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>napkin: plot node designs</title>
+    <style>
+      body {
+        margin: 0 auto;
+        max-width: 760px;
+        padding: 16px;
+        background: #121214;
+        color: #d4d8de;
+        font: 16px/1.45 system-ui, sans-serif;
+      }
+      h1 { font-size: 22px; margin: 8px 0; }
+      h2 { font-size: 19px; margin: 40px 0 4px; padding-top: 16px; border-top: 1px solid #2c2c31; color: #fff; }
+      h3 { font-size: 14px; margin: 22px 0 6px; color: #8fa1b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+      p, li { margin: 6px 0; }
+      a { color: #7db5f5; }
+      .tag { display: inline-block; padding: 1px 8px; border-radius: 9px; background: #1565c0; color: #fff; font-size: 12px; font-weight: 600; vertical-align: middle; }
+      .shots { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+      figure { margin: 0; }
+      /* Screenshots are 1.5 device pixels per pixel. */
+      img { display: block; max-width: 100%; height: auto; border: 1px solid #2c2c31; border-radius: 6px; zoom: 0.6667; }
+      figcaption { font-size: 12px; color: #8b93a0; margin: 2px 0 6px; max-width: 420px; }
+      b { color: #fff; }
+    </style>
+  </head>
+  <body>
+    <h1>Plot node designs</h1>
+    <p>
+      Every picture is a screenshot of the app. The first design is built. The other three are
+      directions that were tried and removed. The bar's designs are on
+      <a href="../bar/">their own page</a>.
+    </p>
+    <p>
+      The cases: distance, velocity, and energy against time; a loan balance against years for
+      three interest rates; CO2 per mile against fuel economy; and an empty plot.
+    </p>
+
+    <h2>1. Tabs on the edge, a panel for each kind <span class="tag">built</span></h2>
+    <p>
+      <b>What it is.</b> Each input has a filled tab on the left edge, as on the bar. A series'
+      tab has its colour, its name, and its number. The x input's tab is grey, at the x axis.
+      Series of one kind share a panel. Each other kind has a panel of its own, and all panels
+      share the x axis.
+    </p>
+    <p>
+      <b>Why.</b> The tab is the legend and the end of the edge, so the chart needs no legend
+      row. A panel for each kind gives every series a true scale, and a plot can hold any
+      number of kinds. Distance, velocity, and energy were an error before.
+    </p>
+    <p>
+      <b>Trade-off.</b> Each panel is shorter than one shared chart. Two series of different
+      kinds cannot cross each other. The tabs make the node wider on its left.
+    </p>
+    <h3>Distance, velocity, energy</h3>
+    <div class="shots"><figure><img src="pick-motion.png" alt="" /></figure></div>
+    <h3>Loan balance at three rates</h3>
+    <div class="shots"><figure><img src="pick-loan.png" alt="" /></figure></div>
+    <h3>CO2 per mile against fuel economy</h3>
+    <div class="shots"><figure><img src="pick-co2.png" alt="" /></figure></div>
+    <h3>Empty</h3>
+    <div class="shots">
+      <figure>
+        <img src="pick-empty.png" alt="" />
+        <figcaption>Faint tabs show where y and x go. A faint line shows what the plot draws.</figcaption>
+      </figure>
+    </div>
+    <h3>States</h3>
+    <div class="shots">
+      <figure>
+        <img src="pick-selected.png" alt="" />
+        <figcaption>
+          Selected. Delete is on the upper right corner. The grey grip on the lower right corner
+          changes the size. Clear shows when there is a path.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="pick-whatif.png" alt="" />
+        <figcaption>
+          A what-if on the 5% balance. Each ring is where a series really is. If the what-if is
+          cancelled, its path stays and no line is drawn back.
+        </figcaption>
+      </figure>
+    </div>
+    <h3>On a phone</h3>
+    <div class="shots">
+      <figure>
+        <img src="pick-phone-canvas.png" alt="" />
+        <figcaption>On the canvas, made narrower with the grip and selected with a tap.</figcaption>
+      </figure>
+      <figure>
+        <img src="pick-phone-list.png" alt="" />
+        <figcaption>In the calculator list. The legend entries look like the tabs.</figcaption>
+      </figure>
+      <figure>
+        <img src="bar-phone-list.png" alt="" />
+        <figcaption>New: a bar is also a card in the calculator list. Its tabs drag there too.</figcaption>
+      </figure>
+    </div>
+    <h3>The ring menu</h3>
+    <div class="shots">
+      <figure>
+        <img src="pick-ring.png" alt="" />
+        <figcaption>
+          The plot is at the upper right. Power moved to the list behind the three dots, with
+          equals. Multiply is drawn, so it is as large as the other signs.
+        </figcaption>
+      </figure>
+    </div>
+
+    <h2>2. One frame with a left and a right axis</h2>
+    <p>
+      <b>What it is.</b> The tabs of design 1, with every series in one frame. A second kind
+      has its numbers on the right. This is how the plot was drawn before, in the new style.
+    </p>
+    <p><b>Why.</b> The chart is as tall as it can be, and it is one picture.</p>
+    <p>
+      <b>Trade-off.</b> Where two lines cross means nothing, because their scales differ. It is
+      hard to see which line belongs to which axis. A third kind has no axis: energy below is
+      drawn against numbers that are not shown.
+    </p>
+    <div class="shots">
+      <figure><img src="overlay-motion.png" alt="" /></figure>
+      <figure><img src="overlay-loan.png" alt="" /></figure>
+    </div>
+
+    <h2>3. A legend row, and round chips on the edge</h2>
+    <p>
+      <b>What it is.</b> The names and numbers are in a row above the chart. Each edge ends at
+      a small round chip in the series' colour.
+    </p>
+    <p><b>Why.</b> The node is narrow, with nothing hanging far past its left edge.</p>
+    <p>
+      <b>Trade-off.</b> The row takes height and runs into the Clear button. A chip does not
+      say which value it is, so the eye goes from the edge to the row and back.
+    </p>
+    <div class="shots">
+      <figure><img src="legend-motion.png" alt="" /></figure>
+      <figure><img src="legend-loan.png" alt="" /></figure>
+    </div>
+
+    <h2>4. Labels at the points</h2>
+    <p>
+      <b>What it is.</b> Each series' name and number are written beside its point, in its
+      colour. The edge ends at a round chip.
+    </p>
+    <p><b>Why.</b> The label is where the eye already is, so no legend is needed.</p>
+    <p>
+      <b>Trade-off.</b> A label near the right edge is cut off. Labels cover each other when
+      points are close. The text moves while a value is scrubbed, which is hard to read.
+    </p>
+    <div class="shots">
+      <figure><img src="direct-motion.png" alt="" /></figure>
+      <figure><img src="direct-loan.png" alt="" /></figure>
+    </div>
+  </body>
+</html>
