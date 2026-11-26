@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>napkin: interaction review</title>
+    <style>
+      body {
+        margin: 0 auto;
+        max-width: 760px;
+        padding: 16px;
+        background: #121214;
+        color: #d4d8de;
+        font: 16px/1.45 system-ui, sans-serif;
+      }
+      h1 { font-size: 22px; margin: 8px 0; }
+      h2 { font-size: 19px; margin: 40px 0 4px; padding-top: 16px; border-top: 1px solid #2c2c31; color: #fff; }
+      h3 { font-size: 14px; margin: 22px 0 6px; color: #8fa1b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+      p, li { margin: 6px 0; }
+      a { color: #7db5f5; }
+      ol, ul { padding-left: 22px; }
+      .tag { display: inline-block; padding: 1px 8px; border-radius: 9px; background: #1565c0; color: #fff; font-size: 12px; font-weight: 600; vertical-align: middle; }
+      .tag.bug { background: #b3261e; }
+      .tag.reach { background: #9a5b00; }
+      .tag.better { background: #3a3f4a; }
+      .shots { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+      figure { margin: 0; max-width: 100%; }
+      img { display: block; max-width: 100%; height: auto; border: 1px solid #2c2c31; border-radius: 6px; }
+      /* Phone screenshots are 1.5 or 1.2 device pixels per pixel. */
+      img.x15 { zoom: 0.6667; }
+      img.x12 { zoom: 0.8333; }
+      figcaption { font-size: 12px; color: #8b93a0; margin: 3px 0 6px; max-width: 420px; }
+      b { color: #fff; }
+      table { border-collapse: collapse; font-size: 14px; width: 100%; }
+      td, th { border-bottom: 1px solid #2c2c31; padding: 5px 6px; text-align: left; vertical-align: top; }
+      th { color: #8fa1b8; font-weight: 600; }
+      .scroll { overflow-x: auto; }
+
+      /* Sketches: plain HTML, not the app. */
+      .sketch { border: 1px dashed #5a6170; border-radius: 10px; padding: 8px; display: inline-block; }
+      .sketch > .label { font-size: 11px; color: #f0c674; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+      .phone { width: 300px; height: 500px; position: relative; overflow: hidden; border-radius: 18px; border: 1px solid #3a3f4a;
+        background: #111114 radial-gradient(#2a2a30 1px, transparent 1px) 0 0 / 16px 16px; font: 12px/1.3 system-ui, sans-serif; color: #1c2430; }
+      .phone.list { background: #f3f5f8; }
+      .top { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; gap: 6px; align-items: center; }
+      .chip { background: #1e1e2a; color: #dfe3ea; border: 1px solid #33384a; border-radius: 8px; padding: 6px 9px; font-size: 11px; }
+      .seg { display: flex; border: 1px solid #33384a; border-radius: 8px; overflow: hidden; font-size: 11px; }
+      .seg span { padding: 6px 8px; background: #1e1e2a; color: #9aa3b2; }
+      .seg span.on { background: #1565c0; color: #fff; }
+      .node { position: absolute; background: #fff; border-radius: 7px; padding: 5px 8px; text-align: center; box-shadow: 0 1px 3px #0008; }
+      .node small { display: block; color: #6b7686; font-size: 9px; }
+      .node b { color: #1565c0; font-size: 12px; }
+      .node.sel { outline: 3px solid #f0a020; }
+      .node.dim { opacity: 0.45; }
+      .op { background: #f1f4f8; }
+      .op i { display: block; white-space: nowrap; font-style: normal; color: #6b7686; font-size: 10px; margin-bottom: 3px; }
+      .wire { position: absolute; left: 0; top: 0; }
+      .sheet { position: absolute; left: 0; right: 0; bottom: 0; background: #1b1c22; color: #e6e9ee; border-top: 1px solid #3a3f4a;
+        border-radius: 14px 14px 0 0; padding: 10px 12px 14px; }
+      .sheet .big { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; }
+      .sheet .big .num { font-size: 22px; font-weight: 700; color: #7db5f5; }
+      .sheet .big .num u { text-decoration: none; font-size: 13px; color: #9ec3f3; margin-left: 4px; }
+      .acts { display: flex; gap: 6px; margin-top: 10px; }
+      .acts span { flex: 1; text-align: center; background: #2a2c36; border-radius: 9px; padding: 9px 0; font-size: 11px; }
+      .acts span.go { background: #1565c0; color: #fff; font-weight: 600; }
+      .acts span.del { color: #ff8a80; }
+      .hint { font-size: 10px; color: #8b93a0; margin-top: 6px; text-align: center; }
+      .row { display: flex; align-items: center; gap: 6px; padding: 7px 0; border-bottom: 1px solid #2c2e38; font-size: 11.5px; }
+      .row .r { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #7b8494; flex: none; }
+      .row.on .r { border-color: #7db5f5; background: radial-gradient(#7db5f5 45%, transparent 50%); }
+      .row .n { flex: 1; }
+      .row .v { color: #9aa3b2; }
+      .row .v b { color: #7db5f5; font-size: 11.5px; }
+      .row .l { color: #7b8494; font-size: 10px; border: 1px solid #3a3f4a; border-radius: 6px; padding: 2px 5px; }
+      .lrow { display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 8px; padding: 9px 10px; margin: 5px 10px; font-size: 12px; }
+      .lrow b { color: #1565c0; border: 1px solid #c9d6ea; border-radius: 5px; padding: 2px 7px; font-size: 12px; }
+      .lrow.res { background: #e8f0fc; font-weight: 600; }
+      .lrow.fold { background: none; color: #6b7686; padding: 4px 10px; }
+      .entry { position: absolute; left: 8px; right: 8px; bottom: 10px; display: flex; gap: 6px; }
+      .entry div { flex: 1; background: #fff; border: 1px solid #c9d0db; border-radius: 10px; padding: 10px; color: #8b93a0; font-size: 12px; }
+      .entry span { width: 40px; border-radius: 12px; background: #1565c0; color: #fff; font-size: 22px; display: flex; align-items: center; justify-content: center; }
+      .tip { position: absolute; background: #f0c674; color: #1c1c1c; border-radius: 8px; padding: 4px 8px; font-size: 10.5px; font-weight: 600; }
+      .slot { display: inline-block; width: 26px; height: 14px; border: 1.5px dashed #9aa3b2; border-radius: 4px; vertical-align: middle; }
+      .err { color: #b3261e; font-size: 9.5px; display: block; margin-top: 2px; }
+    </style>
+  </head>
+  <body>
+    <h1>Interaction review</h1>
+    <p>
+      A review of how napkin is used on a phone and with a mouse, with proposals for Tucker to
+      rule on. Nothing here is built. The full text, with costs and the bug list, is in
+      <code>docs/plans/interaction-review.md</code>.
+    </p>
+    <p>
+      Pictures with a solid border are screenshots of the app today. Pictures in a dashed
+      frame marked <b>sketch</b> are drawings of a proposal, not the app.
+    </p>
+
+    <h2>What to change first</h2>
+    <ol>
+      <li><span class="tag bug">bug</span> Two units that cannot be added show an error on the node. Today the app goes blank and stays blank.</li>
+      <li><span class="tag reach">unreachable</span> A tap selects a number, a node, or an edge. One bar at the bottom holds its actions.</li>
+      <li><span class="tag reach">clash</span> You drag sideways on the selected number to change it. Two fingers always zoom.</li>
+      <li><span class="tag reach">missing</span> There is undo and redo.</li>
+      <li><span class="tag better">better</span> Changing an input changes it at once. Apply and Cancel are only for a computed value.</li>
+      <li><span class="tag reach">hidden</span> The choices in a what-if are a list at the bottom, with names, numbers, and units.</li>
+      <li><span class="tag better">better</span> On a phone, napkin opens to the list, with a line to type in and a "+".</li>
+      <li><span class="tag better">better</span> Numbers show enough digits to be true, and a <code>NaN</code> always has a reason.</li>
+    </ol>
+
+    <h2>The gestures, before and after</h2>
+    <p><b>The rule after:</b> a tap selects, and the selected thing shows what can be done to it. A drag means what it starts on. Two fingers always mean the canvas.</p>
+    <div class="scroll">
+      <table>
+        <tr><th>To do this</th><th>Today</th><th>Proposed</th></tr>
+        <tr><td>Change a number on a phone</td><td>Tap it (keyboard opens), then drag two fingers anywhere</td><td>Tap it, then drag sideways on it</td></tr>
+        <tr><td>Change a number with a mouse</td><td>Wheel over it, selected or not</td><td>Click it, then drag sideways or use the wheel</td></tr>
+        <tr><td>Zoom</td><td>Pinch or wheel, unless a number is under the pointer or was touched last</td><td>Pinch or wheel, always</td></tr>
+        <tr><td>Type a number</td><td>Tap or click the number</td><td>Tap the selected number again; double click; Enter</td></tr>
+        <tr><td>Rename, lock, digits, delete</td><td>Hover, then 22 px buttons</td><td>Select, then the bar at the bottom</td></tr>
+        <tr><td>Delete an edge</td><td>Hover, then a 16 px button</td><td>Tap the edge, then Delete in the bar</td></tr>
+        <tr><td>Add by typing</td><td>Double click or double tap blank canvas</td><td>The "+" button; double click and double tap still work</td></tr>
+        <tr><td>Add from the ring</td><td>Right click or long press; tap or drag a handle</td><td>The same</td></tr>
+        <tr><td>Pick a what-if choice</td><td>A chip beside each node</td><td>A row in the list at the bottom</td></tr>
+        <tr><td>Take back a mistake</td><td>Not possible</td><td>Undo button; Cmd+Z</td></tr>
+        <tr><td>Debug setting</td><td>Shift click</td><td>In the menu</td></tr>
+      </table>
+    </div>
+    <p>The full tables, with every clash, are in the review document.</p>
+
+    <h2>Bug first: units that cannot be added blank the app</h2>
+    <p>
+      Type <code>3 m + 2 s</code> and press Enter, or connect <code>3 m</code> and
+      <code>2 s</code> to a <code>+</code> by hand. The preview says the units do not fit, and
+      then the app goes blank. The workspace was saved, so a reload is blank too.
+    </p>
+    <div class="shots">
+      <figure><img src="crash-entry.png" alt="" /><figcaption>The preview just before Enter. After Enter the screen is empty.</figcaption></figure>
+    </div>
+
+    <h2>1. A tap selects, and one bar holds the actions <span class="tag reach">unreachable today</span></h2>
+    <p>
+      <b>After.</b> A tap on a number, a node, or an edge gives it a clear outline and does not
+      open the keyboard. A bar at the bottom shows it in large type with its actions. Tap the
+      name to rename, the number to type, the unit for the unit list.
+    </p>
+    <p>
+      <b>Today.</b> Rename, lock, digits, and delete are behind a hover. On a phone the buttons
+      show only because a tap sends a hover, and they are 22 px. A tap on a number opens the
+      keyboard and shows the full number in a field too narrow for it.
+    </p>
+    <div class="shots">
+      <figure><img class="x15" src="hover-phone.png" alt="" /><figcaption>Today, phone: the delete and edit buttons after a tap on the node.</figcaption></figure>
+      <figure><img class="x15" src="focus-phone.png" alt="" /><figcaption>Today, phone: a tap on a result opens the keyboard; the number is cut off.</figcaption></figure>
+    </div>
+    <h3>Sketch of the proposal</h3>
+    <div class="sketch">
+      <div class="label">Sketch, not the app</div>
+      <div class="phone">
+        <div class="top"><span class="chip">&#9776;</span><span class="chip">Commute</span><span class="seg"><span>List</span><span class="on">Canvas</span></span><span class="chip">&#8630;</span></div>
+        <div class="node sel" style="left:22px;top:70px"><small>commute</small><b>12 mile</b></div>
+        <div class="node" style="left:118px;top:70px"><small>workdays</small><b>230</b></div>
+        <div class="node" style="left:204px;top:70px"><small>mpg</small><b>28 mile/gal</b></div>
+        <div class="node op" style="left:70px;top:170px"><i>commute * workdays</i><b>2,760 mile</b></div>
+        <div class="node op" style="left:120px;top:250px"><i>2,760 mile / mpg</i><small>fuel</small><b>98.6 gal</b></div>
+        <div class="sheet">
+          <div class="big"><span>commute</span><span class="num">12<u>mile</u></span></div>
+          <div class="acts"><span>Lock</span><span>&minus; digit</span><span>+ digit</span><span class="del">Delete</span></div>
+          <div class="hint">Drag sideways on the number to change it. Tap it to type.</div>
+        </div>
+      </div>
+    </div>
+    <p>
+      <b>Why not the alternatives.</b> Bigger buttons on each node cover neighbours and shrink
+      with zoom. A menu on long press is hidden. A side panel has no room on a phone.
+      Spreadsheet apps on phones work the proposed way: one tap selects, a second tap edits.
+    </p>
+    <p><b>Cost.</b> Medium, about three days. Interface only. It removes the hover buttons.</p>
+
+    <h2>2. Drag sideways on the selected number; two fingers always zoom <span class="tag reach">clash today</span></h2>
+    <p>
+      <b>After.</b> With a number selected, one finger or the mouse on it, dragged sideways,
+      changes it. Right is more. A pinch always zooms. The wheel changes a number only when it
+      is selected.
+    </p>
+    <p>
+      <b>Today.</b> After a tap on a number, a pinch changes that number in place of zooming.
+      In the test a pinch moved <code>commute</code> from 12 to 15. With a mouse, turning the
+      wheel to zoom changes any number under the pointer, by 1/100 of the digit it shows, so
+      <code>12</code> becomes 12.03 and still reads <code>12</code>.
+    </p>
+    <p>
+      <b>Why not the alternatives.</b> The two-finger scrub is the cause of the clash and
+      cannot be found by looking. Up and down clashes with scrolling the list. Figma, Blender,
+      and Bret Victor's Tangle all change a number by a sideways drag.
+    </p>
+    <p><b>Cost.</b> Medium, two days. Interface only. It removes the two-finger scrub.</p>
+
+    <h2>3. What-if choices are a list at the bottom <span class="tag reach">hidden today on a phone</span></h2>
+    <p>
+      <b>After.</b> Changing a computed value opens a short list in the bar at the bottom. Each
+      row is one input that could move, with its name, old number, new number, and unit. A lock
+      on the row means "never move this", and the row goes away.
+    </p>
+    <p>
+      <b>Today.</b> Each choice is a chip beside its node. On a phone the chips for
+      <code>commute</code> and <code>workdays</code> are under the next node, and two more are
+      off the screen. A chip has no name and no unit. The first pick was the unnamed
+      <code>2</code>.
+    </p>
+    <div class="shots">
+      <figure><img class="x12" src="whatif-phone.png" alt="" /><figcaption>Today, phone: co2 was lowered to 1,500 kg. Four of the five choices cannot be seen or tapped.</figcaption></figure>
+      <div class="sketch">
+        <div class="label">Sketch, not the app</div>
+        <div class="phone">
+          <div class="top"><span class="chip">&#9776;</span><span class="chip">Commute</span><span class="seg"><span>List</span><span class="on">Canvas</span></span><span class="chip">&#8630;</span></div>
+          <div class="node dim" style="left:22px;top:60px"><small>commute</small><b>12 mile</b></div>
+          <div class="node" style="left:118px;top:60px"><small>workdays</small><b>197</b><small style="color:#b3261e">-14.5 %</small></div>
+          <div class="node dim" style="left:204px;top:60px"><small>mpg</small><b>28 mile/gal</b></div>
+          <div class="node op sel" style="left:92px;top:140px"><small>co2</small><b>1,500 kg</b><small style="color:#b3261e">-255</small></div>
+          <div class="sheet">
+            <div class="big"><span>co2&nbsp; 1,755 kg &rarr;</span><span class="num">1,500<u>kg</u></span></div>
+            <div style="margin-top:6px">
+              <div class="row"><span class="r"></span><span class="n">commute</span><span class="v">12 &rarr; <b>10.3 mile</b></span><span class="l">lock</span></div>
+              <div class="row on"><span class="r"></span><span class="n">workdays</span><span class="v">230 &rarr; <b>197</b></span><span class="l">lock</span></div>
+              <div class="row"><span class="r"></span><span class="n">mpg</span><span class="v">28 &rarr; <b>32.8 mile/gal</b></span><span class="l">lock</span></div>
+              <div class="row"><span class="r"></span><span class="n">2</span><span class="v">2 &rarr; <b>1.71</b></span><span class="l">lock</span></div>
+              <div class="row"><span class="r"></span><span class="n">8.9 kg/gal</span><span class="v">&rarr; <b>7.61 kg/gal</b></span><span class="l">lock</span></div>
+            </div>
+            <div class="acts"><span>Cancel</span><span class="go">Apply</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="shots">
+      <figure><img src="whatif-desktop.png" alt="" /><figcaption>Today, mouse: the same chips with more room. They still overlap nodes, and the header of each operation shows the old numbers.</figcaption></figure>
+    </div>
+    <p><b>Cost.</b> Medium, two to three days. Interface only.</p>
+
+    <h2>4. Undo and redo <span class="tag reach">missing</span></h2>
+    <p>
+      <b>After.</b> An undo button in the top bar, and Cmd+Z. Every change to the workspace can
+      be taken back.
+    </p>
+    <p>
+      <b>Today.</b> None. With a node selected, Backspace deletes it at once. The hover
+      <code>&times;</code> deletes at once. An applied what-if cannot be taken back.
+    </p>
+    <p>
+      <b>Why.</b> Undo lets the rest be direct: no confirm on delete, and no Apply on a plain
+      change. <b>Cost.</b> Medium, two days: keep the last saved documents in memory and load
+      the one before. No change to the core model.
+    </p>
+
+    <h2>5. Errors and empty things say what is wrong <span class="tag reach">broken today</span></h2>
+    <p>
+      <b>After.</b> An empty operation shows two empty slots and no number. A result with no
+      real answer shows a dash and the reason. A failed save shows "Not saved" until a save
+      works.
+    </p>
+    <div class="shots">
+      <figure><img src="empty-op.png" alt="" /><figcaption>Today: a new multiply shows NaN.</figcaption></figure>
+      <div class="sketch">
+        <div class="label">Sketch, not the app</div>
+        <div style="display:flex;gap:14px;padding:6px 4px;font:12px/1.3 system-ui,sans-serif">
+          <div class="node op" style="position:static"><i><span class="slot"></span> &times; <span class="slot"></span></i><small>connect two values</small></div>
+          <div class="node op" style="position:static"><i>-4 ^ 0.5</i><b style="color:#6b7686">&mdash;</b><span class="err">no real root of a negative number</span></div>
+          <div class="node op" style="position:static"><i>3 m + 2 s</i><b style="color:#6b7686">&mdash;</b><span class="err">m and s cannot be added</span></div>
+        </div>
+      </div>
+    </div>
+    <p><b>Cost.</b> Small, one to two days. A small core change: an operation gives a reason when it cannot compute.</p>
+
+    <h2>6. A "+" and a line to type in at the bottom <span class="tag reach">hidden today</span></h2>
+    <p>
+      <b>After.</b> A "+" at the bottom right opens a full-width line above the keyboard, with
+      the reading of the entry over it. After Enter the view moves to show the result. The same
+      line works in the list.
+    </p>
+    <div class="shots">
+      <figure><img src="empty.png" alt="" /><figcaption>Today: a new workspace. Nothing says to double tap or long press.</figcaption></figure>
+      <figure><img class="x15" src="entry-edge.png" alt="" /><figcaption>Today, phone: the box near the right edge runs off the screen.</figcaption></figure>
+      <figure><img src="entry-long.png" alt="" /><figcaption>Today: the field is 104 px wide; a long equation scrolls inside it.</figcaption></figure>
+    </div>
+    <p><b>Cost.</b> Medium, two days. Interface only. The preview stays as it is.</p>
+
+    <h2>7. Changing an input changes it at once <span class="tag better">could be better</span></h2>
+    <p>
+      <b>After.</b> A change to a typed number flows through the graph and is done. Apply and
+      Cancel show only for a change to a computed value. To hold a result still, lock it. The
+      "Advanced Mode" setting goes away.
+    </p>
+    <div class="shots">
+      <figure><img src="input-apply.png" alt="" /><figcaption>Today: 30 was scrubbed to 32. The app offers to change the 4 in its place and waits for Apply.</figcaption></figure>
+    </div>
+    <p><b>Cost.</b> Small to medium. Needs a check that the core offers the same choices when a result is locked. Best after undo.</p>
+
+    <h2>8. Numbers show enough digits to be true <span class="tag better">could be better</span></h2>
+    <p>
+      <b>After.</b> A result shows three figures. A value moved by a what-if shows enough
+      digits to differ from before. One scrub step is one of the last digit shown, and never
+      coarser than the second figure: <code>5</code> goes 5.1, 5.2.
+    </p>
+    <div class="shots">
+      <figure><img src="figures.png" alt="" /><figcaption>Today: 1 + 0.05 shows 1.1, and 1.1 ^ 10 shows 1.6.</figcaption></figure>
+      <figure><img class="x15" src="applied-phone.png" alt="" /><figcaption>Today, after Apply: the 2 is really 1.71, so the graph reads 2 * 12 = 21.</figcaption></figure>
+    </div>
+    <p><b>Cost.</b> Small, one to two days. The default for results is one line.</p>
+
+    <h2>9. A phone opens to the list <span class="tag better">could be better</span></h2>
+    <p>
+      <b>After.</b> A narrow screen opens to the list. A switch in the top bar goes to the
+      canvas and back, and is remembered. Each group shows inputs first and results after.
+      Locked values fold into one row. The menu lists workspaces first.
+    </p>
+    <div class="shots">
+      <figure><img src="list-phone.png" alt="" /><figcaption>Today: inputs, results, and locked constants in one flat order. GAS $/mile is seventh.</figcaption></figure>
+      <div class="sketch">
+        <div class="label">Sketch, not the app</div>
+        <div class="phone list">
+          <div class="top"><span class="chip">&#9776;</span><span class="chip">Gas vs EV</span><span class="seg"><span class="on">List</span><span>Canvas</span></span><span class="chip">&#8630;</span></div>
+          <div style="margin-top:52px">
+            <div class="lrow"><span>gas price</span><b>4.250 usd/gal</b></div>
+            <div class="lrow"><span>fuel economy</span><b>30.00 mile/gal</b></div>
+            <div class="lrow"><span>EV efficiency</span><b>300.0 Wh/mile</b></div>
+            <div class="lrow"><span>electricity price</span><b>0.1100 usd/kWh</b></div>
+            <div class="lrow fold"><span>&#9656; 8 locked values</span></div>
+            <div class="lrow res"><span>GAS $/mile</span><b>0.142 usd/mile</b></div>
+            <div class="lrow res"><span>EV $/mile</span><b>0.0330 usd/mile</b></div>
+          </div>
+          <div class="entry"><div>type a number or an equation</div><span>+</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="shots">
+      <figure><img src="menu-phone.png" alt="" /><figcaption>Today: the menu. Workspaces are last; the account is below the fold.</figcaption></figure>
+      <figure><img src="list-whatif.png" alt="" /><figcaption>Today, and fine: a what-if in the list. Rows are easy to read and tap.</figcaption></figure>
+    </div>
+    <p><b>Cost.</b> Medium, two to three days. Interface only.</p>
+
+    <h2>10. A new node never covers another <span class="tag better">could be better</span></h2>
+    <p>
+      <b>After.</b> A node added from a handle takes the nearest free place below its source. A
+      node added anywhere moves aside if it would cover another. The view moves to show it. The
+      ring at a handle opens below the handle.
+    </p>
+    <div class="shots">
+      <figure><img src="stacked.png" alt="" /><figcaption>Today: a + and a * were both added from commute. The * hides the +.</figcaption></figure>
+      <figure><img src="plot-covers.png" alt="" /><figcaption>Today: a plot added by right click covers four nodes.</figcaption></figure>
+      <figure><img class="x15" src="ring-covers.png" alt="" /><figcaption>Today, phone: the ring opened from commute's handle covers commute.</figcaption></figure>
+    </div>
+    <p><b>Cost.</b> Small, one to two days. Canvas layout only.</p>
+
+    <h2>11. A new person sees a real example and three hints <span class="tag better">could be better</span></h2>
+    <p>
+      <b>After.</b> The first run opens a small real workspace, fitted to the screen, with three
+      hints that go away once done. An empty workspace shows one line of help.
+    </p>
+    <div class="shots">
+      <figure><img src="first-run.png" alt="" /><figcaption>Today, first run on a phone: a test graph of A, B, and C, with two nodes in view.</figcaption></figure>
+      <div class="sketch">
+        <div class="label">Sketch, not the app</div>
+        <div class="phone list">
+          <div class="top"><span class="chip">&#9776;</span><span class="chip">My commute</span><span class="seg"><span class="on">List</span><span>Canvas</span></span><span class="chip">&#8630;</span></div>
+          <div style="margin-top:52px">
+            <div class="lrow"><span>commute, one way</span><b>12 mile</b></div>
+            <div class="lrow"><span>days a year</span><b>230</b></div>
+            <div class="lrow"><span>fuel economy</span><b>28 mile/gal</b></div>
+            <div class="lrow res"><span>CO2 a year</span><b>1,750 kg</b></div>
+          </div>
+          <span class="tip" style="left:18px;top:236px">1. Drag a number sideways</span>
+          <span class="tip" style="left:18px;top:268px">2. Change the result to ask what-if</span>
+          <span class="tip" style="left:18px;top:300px">3. Tap + to add</span>
+          <div class="entry"><div>type a number or an equation</div><span>+</span></div>
+        </div>
+      </div>
+    </div>
+    <p><b>Cost.</b> Small, one day, plus writing the example.</p>
+
+    <h2>12. An operation's header reads as the formula <span class="tag better">could be better</span></h2>
+    <p>
+      <b>After.</b> The header names each input, or shows its number with its unit:
+      <code>commute * 2</code>, <code>5,520 mile / mpg</code>. During a what-if it shows the
+      numbers on screen. <b>Today</b> it shows bare numbers, and they do not change during a
+      what-if (see the desktop what-if picture above). <b>Cost.</b> Small, half a day.
+    </p>
+
+    <h2>Small things</h2>
+    <div class="shots">
+      <figure><img src="bar-edges.png" alt="" /><figcaption>Edges into a bar's tabs loop under the bar. Let an edge enter from the side nearest its source.</figcaption></figure>
+    </div>
+    <ul>
+      <li>The preview repeats "(in the workspace)" after every name. Use colour.</li>
+      <li>Text in every field at least 16 px, so iOS does not zoom; number fields ask for the number keyboard.</li>
+      <li>Apply and Cancel 44 px tall, above the home bar.</li>
+      <li>A selected bar's controls stay inside the screen on a phone.</li>
+    </ul>
+
+    <h2>Judged fine as it is</h2>
+    <div class="shots">
+      <figure><img src="ring.png" alt="" /><figcaption>The ring: eight places, slide and lift, and a list for the rest.</figcaption></figure>
+    </div>
+    <ul>
+      <li>The text box's preview of how an entry is read.</li>
+      <li>The ring, and the plot's place on it.</li>
+      <li>The unit list.</li>
+      <li>The bar and the plot: tabs, dragging a tab, controls on selection.</li>
+      <li>The what-if in the list, and the highlights on the canvas.</li>
+      <li>Auto save, and tapping the workspace name to rename it.</li>
+    </ul>
+
+    <h2>Open questions</h2>
+    <ol>
+      <li><b>Should the two-finger scrub go?</b> Recommended: yes, once the sideways drag is in.</li>
+      <li><b>Should changing an input ever wait for Apply?</b> Recommended: no. Drop Advanced Mode; lock a result to hold it.</li>
+      <li><b>Should a phone open to the list or the canvas?</b> Recommended: the list, with a one-tap switch.</li>
+      <li><b>Which examples should a new device get?</b> Recommended: a new small commute example first; keep Gas vs EV; stop seeding the two test graphs.</li>
+      <li><b>How many digits should a result show at first?</b> Recommended: three.</li>
+      <li><b>Should the bar at the bottom be the same on a desktop?</b> Recommended: yes, with hover kept only as a preview.</li>
+    </ol>
+  </body>
+</html>

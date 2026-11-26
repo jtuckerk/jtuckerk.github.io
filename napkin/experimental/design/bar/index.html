@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>napkin: bar node designs</title>
+    <style>
+      body {
+        margin: 0 auto;
+        max-width: 760px;
+        padding: 16px;
+        background: #121214;
+        color: #d4d8de;
+        font: 16px/1.45 system-ui, sans-serif;
+      }
+      h1 { font-size: 22px; margin: 8px 0; }
+      h2 { font-size: 19px; margin: 40px 0 4px; padding-top: 16px; border-top: 1px solid #2c2c31; color: #fff; }
+      h3 { font-size: 14px; margin: 22px 0 6px; color: #8fa1b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+      p, li { margin: 6px 0; }
+      ul { padding-left: 20px; }
+      .tag { display: inline-block; padding: 1px 8px; border-radius: 9px; background: #1565c0; color: #fff; font-size: 12px; font-weight: 600; vertical-align: middle; }
+      .shots { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+      figure { margin: 0; }
+      img { display: block; max-width: 100%; height: auto; border: 1px solid #2c2c31; border-radius: 6px; }
+      /* Screenshots are 1.5 device pixels per pixel. */
+      img { zoom: 0.6667; }
+      figcaption { font-size: 12px; color: #8b93a0; margin: 2px 0 6px; }
+      b { color: #fff; }
+    </style>
+  </head>
+  <body>
+    <h1>Bar node designs</h1>
+    <p>
+      Every picture is a screenshot of the app. The first design is built. The other four are
+      directions that were tried and removed.
+    </p>
+    <p>
+      The cases: 10 baseball players with batting averages from .298 to .366, five cars with their
+      miles per gallon, and an empty bar. Each case is shown horizontal and vertical.
+    </p>
+
+    <h2>1. Filled tabs <span class="tag">built</span></h2>
+    <p>
+      <b>What it is.</b> Each value is a dot on the axis and a blue tab with white text. Part of
+      the tab is on the white node and part hangs past its edge. On a horizontal bar the name is
+      above the number. On a vertical bar they share one line.
+    </p>
+    <p>
+      <b>Why.</b> A filled tab shows on the white node and on the dark canvas. Name above number
+      makes a horizontal tab narrow, so 10 values fit. Tabs move apart and never overlap. The
+      shared unit is written once, at the end of the axis.
+    </p>
+    <p>
+      <b>Trade-off.</b> A horizontal bar with names and numbers is taller than before. Ten filled
+      tabs are a lot of blue.
+    </p>
+    <h3>10 players</h3>
+    <div class="shots">
+      <figure><img src="pick-players-h.png" alt="" /></figure>
+      <figure><img src="pick-players-v.png" alt="" /></figure>
+    </div>
+    <h3>5 cars</h3>
+    <div class="shots">
+      <figure><img src="pick-cars-h.png" alt="" /></figure>
+      <figure><img src="pick-cars-v.png" alt="" /></figure>
+    </div>
+    <h3>Empty</h3>
+    <div class="shots">
+      <figure><img src="pick-empty-h.png" alt="" /></figure>
+      <figure><img src="pick-empty-v.png" alt="" /></figure>
+    </div>
+    <h3>Settings and states</h3>
+    <div class="shots">
+      <figure>
+        <img src="pick-names-h.png" alt="" />
+        <figcaption>Text set to names. The bar is lower and tidy.</figcaption>
+      </figure>
+      <figure>
+        <img src="pick-numbers-v.png" alt="" />
+        <figcaption>Text set to numbers.</figcaption>
+      </figure>
+      <figure>
+        <img src="pick-controls-h.png" alt="" />
+        <figcaption>
+          Selected, and made longer. Delete is at the left. Turn and text are at the right. The
+          grey grip on the right edge changes the length. A tap on the bar selects it.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="pick-held-h.png" alt="" />
+        <figcaption>
+          Outback is being dragged. Its tab has a gold border. The ring on the axis is its real
+          number.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="pick-co2-h.png" alt="" />
+        <figcaption>Values spread over a large factor. Close tabs move apart and their points lean.</figcaption>
+      </figure>
+      <figure>
+        <img src="pick-one-h.png" alt="" />
+        <figcaption>One value: a slider from 0 to twice the value.</figcaption>
+      </figure>
+      <figure>
+        <img src="pick-phone.png" alt="" />
+        <figcaption>On a phone screen, selected with a tap.</figcaption>
+      </figure>
+    </div>
+
+    <h2>2. Light tabs</h2>
+    <p>
+      <b>What it is.</b> The same layout as design 1. The tabs are pale blue with a blue outline
+      and blue numbers, like the number field of a value node.
+    </p>
+    <p><b>Why.</b> It is calmer, and it looks like the other nodes.</p>
+    <p>
+      <b>Trade-off.</b> A tab has less contrast with the white node. A tab and its point do not
+      read as one shape.
+    </p>
+    <h3>10 players</h3>
+    <div class="shots">
+      <figure><img src="light-players-h.png" alt="" /></figure>
+      <figure><img src="light-players-v.png" alt="" /></figure>
+    </div>
+    <h3>5 cars</h3>
+    <div class="shots">
+      <figure><img src="light-cars-h.png" alt="" /></figure>
+      <figure><img src="light-cars-v.png" alt="" /></figure>
+    </div>
+    <h3>Empty</h3>
+    <div class="shots">
+      <figure><img src="light-empty-h.png" alt="" /></figure>
+      <figure><img src="light-empty-v.png" alt="" /></figure>
+    </div>
+
+    <h2>3. Text with no tabs</h2>
+    <p>
+      <b>What it is.</b> The node is a thin strip with the axis and the dots. The names and
+      numbers are plain text on the canvas, joined to their dots by thin lines.
+    </p>
+    <p><b>Why.</b> It has the least ink. It looks like a labelled chart.</p>
+    <p>
+      <b>Trade-off.</b> Nothing shows that the text can be dragged. The tabs that sit partly on
+      the node are gone. The text depends on the canvas colour.
+    </p>
+    <h3>10 players</h3>
+    <div class="shots">
+      <figure><img src="labels-players-h.png" alt="" /></figure>
+      <figure><img src="labels-players-v.png" alt="" /></figure>
+    </div>
+    <h3>5 cars</h3>
+    <div class="shots">
+      <figure><img src="labels-cars-h.png" alt="" /></figure>
+      <figure><img src="labels-cars-v.png" alt="" /></figure>
+    </div>
+    <h3>Empty</h3>
+    <div class="shots">
+      <figure><img src="labels-empty-h.png" alt="" /></figure>
+      <figure><img src="labels-empty-v.png" alt="" /></figure>
+    </div>
+
+    <h2>4. Names on one side, numbers on the other</h2>
+    <p>
+      <b>What it is.</b> Each value has two tabs: its name on one side of the axis and its number
+      on the other side.
+    </p>
+    <p>
+      <b>Why.</b> A vertical bar reads as a ranked table. Names and numbers each line up.
+    </p>
+    <p>
+      <b>Trade-off.</b> The two sides no longer hold different values, so every edge arrives on
+      one side. Ten values need a long bar. Each dot has two points, which is busy when values are
+      close.
+    </p>
+    <h3>10 players</h3>
+    <div class="shots">
+      <figure><img src="split-players-h.png" alt="" /></figure>
+      <figure><img src="split-players-v.png" alt="" /></figure>
+    </div>
+    <h3>5 cars</h3>
+    <div class="shots">
+      <figure><img src="split-cars-h.png" alt="" /></figure>
+      <figure><img src="split-cars-v.png" alt="" /></figure>
+    </div>
+    <h3>Empty</h3>
+    <div class="shots">
+      <figure><img src="split-empty-h.png" alt="" /></figure>
+      <figure><img src="split-empty-v.png" alt="" /></figure>
+    </div>
+
+    <h2>5. Outlined tabs on one line</h2>
+    <p>
+      <b>What it is.</b> The nearest to the bar before this work. White tabs with a blue outline.
+      The name, the number, and the unit are on one line in both orientations.
+    </p>
+    <p><b>Why.</b> The tabs are low, so a horizontal bar is not tall.</p>
+    <p>
+      <b>Trade-off.</b> The tabs are wide. Ten values make a horizontal bar very long, and the
+      unit repeats on every tab. A white tab is hard to see on the white node.
+    </p>
+    <h3>10 players</h3>
+    <div class="shots">
+      <figure><img src="outline-players-h.png" alt="" /></figure>
+      <figure><img src="outline-players-v.png" alt="" /></figure>
+    </div>
+    <h3>5 cars</h3>
+    <div class="shots">
+      <figure><img src="outline-cars-h.png" alt="" /></figure>
+      <figure><img src="outline-cars-v.png" alt="" /></figure>
+    </div>
+    <h3>Empty</h3>
+    <div class="shots">
+      <figure><img src="outline-empty-h.png" alt="" /></figure>
+      <figure><img src="outline-empty-v.png" alt="" /></figure>
+    </div>
+  </body>
+</html>
