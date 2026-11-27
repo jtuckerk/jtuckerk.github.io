@@ -5,10 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="/napkin/experimental/favicon.svg" />
     <link rel="apple-touch-icon" href="/napkin/experimental/apple-touch-icon.png" />
     <meta name="theme-color" content="#1565c0" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- resizes-visual: an on-screen keyboard shrinks only the visual viewport, as iOS does too;
+         the key row reads the keyboard's place from it (src/components/keyRow/keyboardTop.ts).
+         cover: the page draws under a camera cutout; controls at an edge pad by env(safe-area-inset-*). -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, interactive-widget=resizes-visual, viewport-fit=cover"
+    />
     <title>napkin</title>
-    <script type="module" crossorigin src="/napkin/experimental/assets/index-COgtuDiU.js"></script>
-    <link rel="stylesheet" crossorigin href="/napkin/experimental/assets/index-DBjZiDsc.css">
+    <script type="module" crossorigin src="/napkin/experimental/assets/index-CYBr2ogk.js"></script>
+    <link rel="stylesheet" crossorigin href="/napkin/experimental/assets/index-DVmjB3vJ.css">
   </head>
   <body>
     <div id="root"></div>
